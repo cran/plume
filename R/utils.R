@@ -1,17 +1,13 @@
 unique.list <- function(x, ...) {
-  unique(unlist(x, use.names = FALSE), ...)
+  unique(squash(x), ...)
 }
 
-includes <- function(x, y, ignore_case = TRUE) {
-  out <- list(x = x, y = y)
-  if (ignore_case) {
-    out <- map(out, tolower)
-  }
-  out$x %in% out$y
+squash <- function(x) {
+  unlist(x, use.names = FALSE)
 }
 
-true_if <- function(condition, ...) {
-  if_else(condition, TRUE, FALSE, ...)
+begins_with <- function(x) {
+  paste0("^", x)
 }
 
 if_not_na <- function(x, value, ..., all = FALSE) {
@@ -27,19 +23,19 @@ not_na_any <- function(cols) {
 }
 
 dot <- function(x) {
-  string_replace_all(x, "(?<=[\\pL\\pN](?!\\p{Po}))", ".")
+  str_replace_all(x, "(?<=[\\p{L}\\p{N}](?!\\p{Po}))", ".")
 }
 
 make_initials <- function(x, dot = FALSE) {
-  out <- string_remove_all(x, "(*UCP)\\B\\w+|\\s+")
+  out <- str_remove_all(x, "\\B\\w+|[\\s.]+")
   if (dot) {
     out <- dot(out)
   }
   out
 }
 
-drop_from <- function(x, ...) {
-  x[!includes(x, c(...))]
+discard <- function(x, ...) {
+  x[!vec_in(x, c(...))]
 }
 
 vec_drop_na <- function(x) {
@@ -48,6 +44,42 @@ vec_drop_na <- function(x) {
 
 vec_arrange <- function(x) {
   x[order(nchar(x), x)]
+}
+
+vec_in <- function(x, y, ignore_case = TRUE) {
+  if (ignore_case) {
+    x <- tolower(x)
+    y <- tolower(y)
+  }
+  x %in% y
+}
+
+vec_match <- function(x, y, ignore_case = TRUE) {
+  if (ignore_case) {
+    x <- tolower(x)
+    y <- tolower(y)
+  }
+  match(x, y)
+}
+
+rank <- function(x, base) {
+  matches <- vec_match(x, base)
+  vec_rank(matches, ties = "dense")
+}
+
+recycle_to_names <- function(x, nms) {
+  if (is_named(nms)) {
+    nms <- names(nms)
+  }
+  x <- rep(list(x), length(nms))
+  set_names(x, nms)
+}
+
+collect_dots <- function(...) {
+  if (are_calls(...)) {
+    return(c(...))
+  }
+  enexprs(...)
 }
 
 condense <- function(x) {
@@ -77,7 +109,7 @@ get_params_set_to_true <- function() {
 }
 
 extract_glue_vars <- function(x) {
-  string_extract_all(x, "(?<=\\{)[^}]+")
+  str_extract_all(x, "(?<=\\{\\b)[^}]+", simplify = TRUE)
 }
 
 group_id <- function(x) {
@@ -98,8 +130,17 @@ propagate_na <- function(x, from) {
 to_chr_class <- function(x, negate = FALSE) {
   neg <- if (negate) "^" else ""
   x <- collapse(x)
-  x <- string_replace(x, r"{([-\\\[\]])}", r"{\\\1}")
+  x <- str_replace(x, r"{([-\\\[\]])}", r"{\\\1}")
   paste0("[", neg, x, "]")
+}
+
+str_contain <- function(string, pattern) {
+  str_detect(string, fixed(pattern))
+}
+
+str_detect <- function(string, pattern) {
+  out <- stringr::str_detect(string, pattern)
+  replace(out, is.na(string), FALSE)
 }
 
 wrap <- function(x, value) {

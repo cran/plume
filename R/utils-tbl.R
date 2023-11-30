@@ -43,7 +43,7 @@ add_suffixes <- function(data, cols, symbols) {
     if (key == "orcid") {
       data <<- add_orcid_icons(data, value)
     } else {
-      data <<- add_symbols(data, .cols[key], value)
+      data <<- add_symbols(data, .cols[[key]], value)
     }
   })
   data
@@ -72,9 +72,28 @@ add_orcid_links <- function(data, orcid, compact = FALSE) {
   data
 }
 
-crt_assign <- function(data) {
+add_contribution_ranks <- function(data, values, roles, by, cols) {
+  data <- col_init(data, cols$contributor_rank)
+  iwalk(values, \(value, key) {
+    data[cols$contributor_rank] <<- if_else(
+      is_not_na(roles[key]) & data[[cols$role]] == roles[key],
+      rank(data[[by]], value),
+      data[[cols$contributor_rank]]
+    )
+  })
   data
-  iwalk(.names$protected$crt, \(value, key) {
+}
+
+col_init <- function(data, name) {
+  if (!has_name(data, name)) {
+    data[name] <- NA
+  }
+  data
+}
+
+assign_roles <- function(data, roles) {
+  data
+  iwalk(roles, \(value, key) {
     if (!has_name(data, key)) {
       return()
     }
@@ -83,8 +102,10 @@ crt_assign <- function(data) {
   data
 }
 
-crt_rename <- function(data, prefix) {
-  vars <- names(.names$protected$crt)
-  new_names <- paste(prefix, vars, sep = "_")
-  rename(data, any_of(set_names(vars, new_names)))
+rename_roles <- function(data, roles, key) {
+  nms <- names(roles)
+  if (length(nms) > 1L) {
+    key <- paste(key, seq_along(nms), sep = "_")
+  }
+  rename(data, any_of(set_names(nms, key)))
 }

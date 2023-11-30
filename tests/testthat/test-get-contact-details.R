@@ -1,13 +1,11 @@
 test_that("get_contact_details() returns contact details of corresponding authors", {
-  df <- basic_df()
-  aut <- Plume$new(df)
+  aut <- Plume$new(basic_df)
   aut$set_corresponding_authors(1, 2)
 
   expect_s3_class(aut$get_contact_details(), "plm")
 
-  df2 <- df[1:2, ]
-  literal_names <- df2$literal_name
-  emails <- df2$email
+  literal_names <- c("Zip Zap", "Ric Rac")
+  emails <- c("zipzap@test.com", "ricrac@test.com")
 
   expect_equal(
     aut$get_contact_details(),
@@ -23,20 +21,20 @@ test_that("get_contact_details() returns contact details of corresponding author
   )
   expect_equal(
     aut$get_contact_details(phone = TRUE),
-    paste0(emails, c(", 00", ""), " (", literal_names, ")")
+    paste0(emails, c(", +1234", ""), " (", literal_names, ")")
   )
   expect_equal(
     aut$get_contact_details(phone = TRUE, sep = "; "),
-    paste0(emails, c("; 00", ""), " (", literal_names, ")")
+    paste0(emails, c("; +1234", ""), " (", literal_names, ")")
   )
   expect_equal(
     aut$get_contact_details(email = FALSE, phone = TRUE),
-    paste0("00", " (", literal_names[1], ")")
+    "+1234 (Zip Zap)"
   )
 })
 
-test_that("get_contact_details() returns `NULL` if all boolean arguments are `FALSE`", {
-  aut <- Plume$new(encyclopedists)
+test_that("get_contact_details() returns `NULL` if all booleans are `FALSE`", {
+  aut <- Plume$new(basic_df)
   aut$set_corresponding_authors(1)
   expect_null(aut$get_contact_details(email = FALSE))
 })
@@ -44,15 +42,9 @@ test_that("get_contact_details() returns `NULL` if all boolean arguments are `FA
 # Errors ----
 
 test_that("get_conctact_details() gives meaningful error messages", {
-  aut <- Plume$new(encyclopedists)
+  aut <- Plume$new(basic_df)
 
   expect_snapshot({
-    (expect_error(
-      aut$get_contact_details(format = 1)
-    ))
-    (expect_error(
-      aut$get_contact_details(format = "")
-    ))
     (expect_error(
       aut$get_contact_details(format = "foo")
     ))
@@ -66,13 +58,10 @@ test_that("get_conctact_details() gives meaningful error messages", {
       aut$get_contact_details(email = 1)
     ))
     (expect_error(
-      aut$get_contact_details(sep = 1)
+      aut$get_contact_details(sep = NULL)
     ))
     (expect_error(
       aut$get_contact_details(sep = "")
-    ))
-    (expect_error(
-      aut$get_contact_details(sep = NULL)
     ))
 
     aut$set_corresponding_authors(1)

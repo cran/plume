@@ -4,7 +4,7 @@
 \alias{PlumeQuarto}
 \title{PlumeQuarto class}
 \description{
-Class that pushes or updates author metadata in the YAML header
+Class that pushes author metadata in the YAML header
 of Quarto files.
 }
 \examples{
@@ -23,8 +23,7 @@ cat(readr::read_file(tmp_file))
 # you've just created
 aut <- PlumeQuarto$new(
   encyclopedists,
-  file = tmp_file,
-  names = c(role = "role_n")
+  file = tmp_file
 )
 
 # And push author data to the YAML header
@@ -36,8 +35,7 @@ cat(readr::read_file(tmp_file))
 # header accordingly
 aut <- PlumeQuarto$new(
   dplyr::slice(encyclopedists, 2),
-  file = tmp_file,
-  names = c(role = "role_n")
+  file = tmp_file
 )
 aut$to_yaml()
 
@@ -45,7 +43,7 @@ cat(readr::read_file(tmp_file))
 \dontshow{\}) # examplesIf}
 }
 \section{Super classes}{
-\code{\link[plume:NameHandler]{plume::NameHandler}} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{\link[plume:StatusSetterQuarto]{plume::StatusSetterQuarto}} -> \code{PlumeQuarto}
+\code{\link[plume:NameHandler]{plume::NameHandler}} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{\link[plume:StatusSetterPlumeQuarto]{plume::StatusSetterPlumeQuarto}} -> \code{PlumeQuarto}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -56,13 +54,15 @@ cat(readr::read_file(tmp_file))
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterQuarto" data-id="set_deceased"><a href='../../plume/html/StatusSetterQuarto.html#method-StatusSetterQuarto-set_deceased'><code>plume::StatusSetterQuarto$set_deceased()</code></a></span></li>
-<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterQuarto" data-id="set_equal_contributor"><a href='../../plume/html/StatusSetterQuarto.html#method-StatusSetterQuarto-set_equal_contributor'><code>plume::StatusSetterQuarto$set_equal_contributor()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlumeQuarto" data-id="set_cofirst_authors"><a href='../../plume/html/StatusSetterPlumeQuarto.html#method-StatusSetterPlumeQuarto-set_cofirst_authors'><code>plume::StatusSetterPlumeQuarto$set_cofirst_authors()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlumeQuarto" data-id="set_deceased"><a href='../../plume/html/StatusSetterPlumeQuarto.html#method-StatusSetterPlumeQuarto-set_deceased'><code>plume::StatusSetterPlumeQuarto$set_deceased()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlumeQuarto" data-id="set_equal_contributor"><a href='../../plume/html/StatusSetterPlumeQuarto.html#method-StatusSetterPlumeQuarto-set_equal_contributor'><code>plume::StatusSetterPlumeQuarto$set_equal_contributor()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -76,6 +76,7 @@ Create a \code{PlumeQuarto} object.
   data,
   file,
   names = NULL,
+  roles = credit_roles(),
   credit_roles = FALSE,
   initials_given_name = FALSE,
   by = NULL
@@ -92,13 +93,19 @@ Create a \code{PlumeQuarto} object.
 \item{\code{names}}{A vector of key-value pairs specifying custom names to use,
 where keys are default names and values their respective replacements.}
 
-\item{\code{credit_roles}}{Should the \href{https://credit.niso.org}{Contributor Roles Taxonomy} be used? See
-\code{vignette("using-credit-roles")} for details.}
+\item{\code{roles}}{A vector of key-value pairs defining roles where keys
+identify columns and values describe the actual roles to use.}
+
+\item{\code{credit_roles}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+It is now recommended to use \code{roles = credit_roles()} to use the
+\href{https://credit.niso.org}{Contributor Roles Taxonomy}.}
 
 \item{\code{initials_given_name}}{Should the initials of given names be used?}
 
 \item{\code{by}}{A character string defining the default variable used to assign
-authors' status in all \verb{set_*()} methods. By default, uses authors' id.}
+specific metadata to authors in all \verb{set_*()} methods. By default, uses
+authors' id.}
 }
 \if{html}{\out{</div>}}
 }

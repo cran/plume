@@ -9,7 +9,7 @@ information as character strings.
 }
 \examples{
 # Create a Plume instance
-aut <- Plume$new(encyclopedists, names = c(role = "role_n"))
+aut <- Plume$new(encyclopedists)
 
 # Set the desired corresponding authors, using
 # authors' id by default
@@ -41,11 +41,14 @@ aut$get_affiliations()
 
 # It is also possible to output contributions in the
 # active voice
-aut <- Plume$new(encyclopedists, names = c(role = "role_v"))
+aut <- Plume$new(encyclopedists, roles = c(
+  supervision = "supervised the project",
+  writing = "contributed to the Encyclopédie"
+))
 aut$get_contributions(roles_first = FALSE, divider = " ")
 }
 \section{Super classes}{
-\code{\link[plume:NameHandler]{plume::NameHandler}} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{Plume}
+\code{\link[plume:NameHandler]{plume::NameHandler}} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{\link[plume:StatusSetterPlume]{plume::StatusSetterPlume}} -> \code{Plume}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -64,8 +67,10 @@ aut$get_contributions(roles_first = FALSE, divider = " ")
 <details open><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlume" data-id="set_main_contributors"><a href='../../plume/html/StatusSetterPlume.html#method-StatusSetterPlume-set_main_contributors'><code>plume::StatusSetterPlume$set_main_contributors()</code></a></span></li>
 </ul>
 </details>
 }}
@@ -79,11 +84,13 @@ Create a \code{Plume} object.
   data,
   names = NULL,
   symbols = NULL,
+  roles = credit_roles(),
   credit_roles = FALSE,
   initials_given_name = FALSE,
   family_name_first = FALSE,
   interword_spacing = TRUE,
-  orcid_icon = orcid()
+  orcid_icon = orcid(),
+  by = NULL
 )}\if{html}{\out{</div>}}
 }
 
@@ -101,8 +108,13 @@ link authors and their metadata. Valid keys are \code{"affiliation"},
 affiliations, \code{"*"} for corresponding authors and \code{"†"}, \code{"‡"}, \code{"§"},
 \code{"¶"}, \code{"#"}, \code{"**"} for notes. Set a key to \code{NULL} to use numerals.}
 
-\item{\code{credit_roles}}{Should the \href{https://credit.niso.org}{Contributor Roles Taxonomy} be used? See
-\code{vignette("using-credit-roles")} for details.}
+\item{\code{roles}}{A vector of key-value pairs defining roles where keys
+identify role columns and values describe the actual roles to use.}
+
+\item{\code{credit_roles}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+It is now recommended to use \code{roles = credit_roles()} to use the
+\href{https://credit.niso.org}{Contributor Roles Taxonomy}.}
 
 \item{\code{initials_given_name}}{Should the initials of given names be used?}
 
@@ -113,6 +125,10 @@ is only useful for people writing in languages that don't separate
 words with a space such as Chinese or Japanese.}
 
 \item{\code{orcid_icon}}{The ORCID icon, as defined by \code{\link[=orcid]{orcid()}}, to be used.}
+
+\item{\code{by}}{A character string defining the default variable used to assign
+specific metadata to authors in all \verb{set_*()} methods. By default, uses
+authors' id.}
 }
 \if{html}{\out{</div>}}
 }

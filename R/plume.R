@@ -1,3 +1,7 @@
+.names_plume <- list_modify(.names, public = list(
+   internals = list(contributor_rank = "contributor_rank")
+ ))
+
 .symbols <- list(
   affiliation = NULL,
   corresponding = "\\*",
@@ -9,7 +13,7 @@
 #'   information as character strings.
 #' @examples
 #' # Create a Plume instance
-#' aut <- Plume$new(encyclopedists, names = c(role = "role_n"))
+#' aut <- Plume$new(encyclopedists)
 #'
 #' # Set the desired corresponding authors, using
 #' # authors' id by default
@@ -41,12 +45,15 @@
 #'
 #' # It is also possible to output contributions in the
 #' # active voice
-#' aut <- Plume$new(encyclopedists, names = c(role = "role_v"))
+#' aut <- Plume$new(encyclopedists, roles = c(
+#'   supervision = "supervised the project",
+#'   writing = "contributed to the Encyclopédie"
+#' ))
 #' aut$get_contributions(roles_first = FALSE, divider = " ")
 #' @export
 Plume <- R6Class(
   classname = "Plume",
-  inherit = StatusSetter,
+  inherit = StatusSetterPlume,
   public = list(
     #' @description Create a `Plume` object.
     #' @param data A data frame containing author-related data.
@@ -57,32 +64,43 @@ Plume <- R6Class(
     #'   `"corresponding"` and `"note"`. By default, uses digits for
     #'   affiliations, `"*"` for corresponding authors and `"†"`, `"‡"`, `"§"`,
     #'   `"¶"`, `"#"`, `"**"` for notes. Set a key to `NULL` to use numerals.
-    #' @param credit_roles Should the `r link("crt")` be used? See
-    #'   `vignette("using-credit-roles")` for details.
+    #' @param roles A vector of key-value pairs defining roles where keys
+    #'   identify role columns and values describe the actual roles to use.
+    #' @param credit_roles `r lifecycle::badge("deprecated")`
+    #'
+    #'   It is now recommended to use `roles = credit_roles()` to use the
+    #'   `r link("crt")`.
     #' @param initials_given_name Should the initials of given names be used?
     #' @param family_name_first Should literal names show family names first?
     #' @param interword_spacing Should literal names use spacing? This parameter
     #'   is only useful for people writing in languages that don't separate
     #'   words with a space such as Chinese or Japanese.
     #' @param orcid_icon The ORCID icon, as defined by [`orcid()`], to be used.
+    #' @param by A character string defining the default variable used to assign
+    #'   specific metadata to authors in all `set_*()` methods. By default, uses
+    #'   authors' id.
     #' @return A `Plume` object.
     initialize = function(
         data,
         names = NULL,
         symbols = NULL,
+        roles = credit_roles(),
         credit_roles = FALSE,
         initials_given_name = FALSE,
         family_name_first = FALSE,
         interword_spacing = TRUE,
-        orcid_icon = orcid()
+        orcid_icon = orcid(),
+        by = NULL
     ) {
       super$initialize(
         data,
         names,
+        roles,
         credit_roles,
         initials_given_name,
         family_name_first,
-        interword_spacing
+        interword_spacing,
+        by = NULL
       )
       check_list(symbols, force_names = TRUE)
       check_orcid_icon(orcid_icon)
@@ -236,14 +254,10 @@ Plume <- R6Class(
         out <- mutate(out, !!pars$author := dot(.data[[pars$author]]))
       }
       out <- summarise(out, !!pars$var := enumerate(
-        if (!by_author && alphabetical_order) {
-          sort(.data[[pars$var]])
-        } else {
-          .data[[pars$var]]
-        },
+        contribution_items(pars, by_author, alphabetical_order),
         last = sep_last
       ), .by = all_of(pars$grp_var))
-      if (private$crt) {
+      if (are_credit_roles(private$roles) || private$crt) {
         out <- arrange(out, role)
       }
       out <- collapse_cols(out, pars$format, sep = divider)
@@ -252,6 +266,7 @@ Plume <- R6Class(
   ),
 
   private = list(
+    plume_names = .names_plume,
     symbols = .symbols,
     orcid_icon = NULL,
 
@@ -292,7 +307,7 @@ Plume <- R6Class(
 
     contribution_pars = function(roles_first, by_author, literal_names) {
       vars <- private$pick(
-        "initials", "literal_name", "role", "id",
+        "initials", "literal_name", "role", "id", "contributor_rank",
         squash = FALSE
       )
       has_initials <- private$has_col(vars$initials)
@@ -316,9 +331,22 @@ Plume <- R6Class(
         has_initials = has_initials,
         author = author,
         grp_var = grp_var,
+        rank = vars$contributor_rank,
         var = var,
         format = format
       )
     }
   )
 )
+
+ contribution_items <- function(pars, by_author, alphabetical_order) {
+   data <- dplyr::pick(any_of(c(pars$var, pars$rank)))
+   cols <- c(
+     if (has_name(data, pars$rank)) pars$rank,
+     if (alphabetical_order) pars$var
+   )
+   if (!is.null(cols) && !by_author) {
+     data <- arrange(data, across(any_of(cols)))
+   }
+   data[[pars$var]]
+ }

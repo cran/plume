@@ -342,7 +342,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <p>The goal of the plume package is to make the handling and formatting
 of author data for scientific writing in R Markdown and Quarto easy and
-(almost) painless.</p>
+painless.</p>
 <div id="example-data" class="section level2">
 <h2>Example data</h2>
 <p>We’ll use the data sets <code>encyclopedists</code> and
@@ -354,14 +354,14 @@ authors of the “Encyclopédie”, published in France in the 18th century.
 custom variable names. Both data sets are documented in
 <code>?encyclopedists</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>encyclopedists</span>
-<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 12</span></span>
-<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   given_name family_name email phone orcid role_n1 role_n2 role_v1 role_v2 note </span></span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;</span></span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; 1 Denis      Diderot     dide… 00 0… 0000… Writing Superv… contri… superv… born…</span></span>
-<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; 2 Jean-Jacq… Rousseau    rous… &lt;NA&gt;  0000… Writing &lt;NA&gt;    contri… &lt;NA&gt;    &lt;NA&gt; </span></span>
-<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; 3 François-… Arouet      arou… &lt;NA&gt;  &lt;NA&gt;  Writing &lt;NA&gt;    contri… &lt;NA&gt;    also…</span></span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; 4 Jean       Le Rond d&#39;… alem… &lt;NA&gt;  0000… Writing Superv… contri… superv… born…</span></span>
-<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: affiliation1 &lt;chr&gt;, affiliation2 &lt;chr&gt;</span></span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 10</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="co">#&gt;   given_name     family_name        email  phone orcid supervision writing note </span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="co">#&gt;   &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;  &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="co">#&gt; 1 Denis          Diderot            dider… +1234 0000…           1       1 born…</span></span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="co">#&gt; 2 Jean-Jacques   Rousseau           rouss… &lt;NA&gt;  0000…          NA       1 &lt;NA&gt; </span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="co">#&gt; 3 François-Marie Arouet             aroue… &lt;NA&gt;  &lt;NA&gt;           NA       1 also…</span></span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="co">#&gt; 4 Jean           Le Rond d&#39;Alembert alemb… &lt;NA&gt;  0000…           1       1 born…</span></span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="co">#&gt; # ℹ 2 more variables: affiliation_1 &lt;chr&gt;, affiliation_2 &lt;chr&gt;</span></span></code></pre></div>
 </div>
 <div id="creating-a-plume-object" class="section level2">
 <h2>Creating a <code>plume</code> object</h2>
@@ -369,13 +369,13 @@ custom variable names. Both data sets are documented in
 <code>PlumeQuarto</code>. To create a <code>plume</code> object, simply
 write the name of the class you want to use followed by the
 <code>new()</code> method. plume classes take a data frame or tibble as
-input data. The input data must have at least two columns named
-<code>given_name</code> and <code>family_name</code>.</p>
+input data. The input data must have at least two columns, one for given
+names and another for family names.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 11</span></span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name literal_name initials email phone orcid note </span></span>
 <span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot     Denis Dider… DD       dide… 00 0… 0000… born…</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot     Denis Dider… DD       dide… +1234 0000… born…</span></span>
 <span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau    Jean-Jacque… J-JR     rous… &lt;NA&gt;  0000… &lt;NA&gt; </span></span>
 <span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet      François-Ma… F-MA     arou… &lt;NA&gt;  &lt;NA&gt;  also…</span></span>
 <span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;… Jean Le Ron… JLRd&#39;A   alem… &lt;NA&gt;  0000… born…</span></span>
@@ -387,20 +387,20 @@ input data. The input data must have at least two columns named
 categories:</p>
 <p><strong>Primaries</strong>: variables required to create a
 <code>plume</code> object.</p>
-<div id="jxbehxkngh" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#jxbehxkngh table {
+<div id="wyeolrfnbi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#wyeolrfnbi table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#jxbehxkngh thead, #jxbehxkngh tbody, #jxbehxkngh tfoot, #jxbehxkngh tr, #jxbehxkngh td, #jxbehxkngh th {
+#wyeolrfnbi thead, #wyeolrfnbi tbody, #wyeolrfnbi tfoot, #wyeolrfnbi tr, #wyeolrfnbi td, #wyeolrfnbi th {
 border-style: none;
 }
-#jxbehxkngh p {
+#wyeolrfnbi p {
 margin: 0;
 padding: 0;
 }
-#jxbehxkngh .gt_table {
+#wyeolrfnbi .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -425,11 +425,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#jxbehxkngh .gt_caption {
+#wyeolrfnbi .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#jxbehxkngh .gt_title {
+#wyeolrfnbi .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -440,7 +440,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#jxbehxkngh .gt_subtitle {
+#wyeolrfnbi .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -451,7 +451,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#jxbehxkngh .gt_heading {
+#wyeolrfnbi .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -462,12 +462,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#jxbehxkngh .gt_bottom_border {
+#wyeolrfnbi .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jxbehxkngh .gt_col_headings {
+#wyeolrfnbi .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -481,7 +481,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#jxbehxkngh .gt_col_heading {
+#wyeolrfnbi .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -500,7 +500,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#jxbehxkngh .gt_column_spanner_outer {
+#wyeolrfnbi .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -511,13 +511,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#jxbehxkngh .gt_column_spanner_outer:first-child {
+#wyeolrfnbi .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#jxbehxkngh .gt_column_spanner_outer:last-child {
+#wyeolrfnbi .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#jxbehxkngh .gt_column_spanner {
+#wyeolrfnbi .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -528,10 +528,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#jxbehxkngh .gt_spanner_row {
+#wyeolrfnbi .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#jxbehxkngh .gt_group_heading {
+#wyeolrfnbi .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -556,7 +556,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#jxbehxkngh .gt_empty_group_heading {
+#wyeolrfnbi .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -570,13 +570,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#jxbehxkngh .gt_from_md > :first-child {
+#wyeolrfnbi .gt_from_md > :first-child {
 margin-top: 0;
 }
-#jxbehxkngh .gt_from_md > :last-child {
+#wyeolrfnbi .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#jxbehxkngh .gt_row {
+#wyeolrfnbi .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -594,7 +594,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#jxbehxkngh .gt_stub {
+#wyeolrfnbi .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -606,7 +606,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jxbehxkngh .gt_stub_row_group {
+#wyeolrfnbi .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -619,13 +619,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#jxbehxkngh .gt_row_group_first td {
+#wyeolrfnbi .gt_row_group_first td {
 border-top-width: 2px;
 }
-#jxbehxkngh .gt_row_group_first th {
+#wyeolrfnbi .gt_row_group_first th {
 border-top-width: 2px;
 }
-#jxbehxkngh .gt_summary_row {
+#wyeolrfnbi .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -634,14 +634,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jxbehxkngh .gt_first_summary_row {
+#wyeolrfnbi .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#jxbehxkngh .gt_first_summary_row.thick {
+#wyeolrfnbi .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#jxbehxkngh .gt_last_summary_row {
+#wyeolrfnbi .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -650,7 +650,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jxbehxkngh .gt_grand_summary_row {
+#wyeolrfnbi .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -659,7 +659,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jxbehxkngh .gt_first_grand_summary_row {
+#wyeolrfnbi .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -668,7 +668,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#jxbehxkngh .gt_last_grand_summary_row_top {
+#wyeolrfnbi .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -677,10 +677,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#jxbehxkngh .gt_striped {
+#wyeolrfnbi .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#jxbehxkngh .gt_table_body {
+#wyeolrfnbi .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -688,7 +688,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#jxbehxkngh .gt_footnotes {
+#wyeolrfnbi .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -701,7 +701,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#jxbehxkngh .gt_footnote {
+#wyeolrfnbi .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -709,7 +709,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jxbehxkngh .gt_sourcenotes {
+#wyeolrfnbi .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -722,57 +722,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#jxbehxkngh .gt_sourcenote {
+#wyeolrfnbi .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#jxbehxkngh .gt_left {
+#wyeolrfnbi .gt_left {
 text-align: left;
 }
-#jxbehxkngh .gt_center {
+#wyeolrfnbi .gt_center {
 text-align: center;
 }
-#jxbehxkngh .gt_right {
+#wyeolrfnbi .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#jxbehxkngh .gt_font_normal {
+#wyeolrfnbi .gt_font_normal {
 font-weight: normal;
 }
-#jxbehxkngh .gt_font_bold {
+#wyeolrfnbi .gt_font_bold {
 font-weight: bold;
 }
-#jxbehxkngh .gt_font_italic {
+#wyeolrfnbi .gt_font_italic {
 font-style: italic;
 }
-#jxbehxkngh .gt_super {
+#wyeolrfnbi .gt_super {
 font-size: 65%;
 }
-#jxbehxkngh .gt_footnote_marks {
+#wyeolrfnbi .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#jxbehxkngh .gt_asterisk {
+#wyeolrfnbi .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#jxbehxkngh .gt_indent_1 {
+#wyeolrfnbi .gt_indent_1 {
 text-indent: 5px;
 }
-#jxbehxkngh .gt_indent_2 {
+#wyeolrfnbi .gt_indent_2 {
 text-indent: 10px;
 }
-#jxbehxkngh .gt_indent_3 {
+#wyeolrfnbi .gt_indent_3 {
 text-indent: 15px;
 }
-#jxbehxkngh .gt_indent_4 {
+#wyeolrfnbi .gt_indent_4 {
 text-indent: 20px;
 }
-#jxbehxkngh .gt_indent_5 {
+#wyeolrfnbi .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -804,20 +804,20 @@ text-indent: 25px;
 </div>
 <p><strong>Secondaries</strong>: optional variables that can be provided
 in the input data.</p>
-<div id="sssldojgpp" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#sssldojgpp table {
+<div id="hmzfqtdvim" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#hmzfqtdvim table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#sssldojgpp thead, #sssldojgpp tbody, #sssldojgpp tfoot, #sssldojgpp tr, #sssldojgpp td, #sssldojgpp th {
+#hmzfqtdvim thead, #hmzfqtdvim tbody, #hmzfqtdvim tfoot, #hmzfqtdvim tr, #hmzfqtdvim td, #hmzfqtdvim th {
 border-style: none;
 }
-#sssldojgpp p {
+#hmzfqtdvim p {
 margin: 0;
 padding: 0;
 }
-#sssldojgpp .gt_table {
+#hmzfqtdvim .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -842,11 +842,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#sssldojgpp .gt_caption {
+#hmzfqtdvim .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#sssldojgpp .gt_title {
+#hmzfqtdvim .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -857,7 +857,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#sssldojgpp .gt_subtitle {
+#hmzfqtdvim .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -868,7 +868,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#sssldojgpp .gt_heading {
+#hmzfqtdvim .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -879,12 +879,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sssldojgpp .gt_bottom_border {
+#hmzfqtdvim .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sssldojgpp .gt_col_headings {
+#hmzfqtdvim .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -898,7 +898,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#sssldojgpp .gt_col_heading {
+#hmzfqtdvim .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -917,7 +917,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#sssldojgpp .gt_column_spanner_outer {
+#hmzfqtdvim .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -928,13 +928,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#sssldojgpp .gt_column_spanner_outer:first-child {
+#hmzfqtdvim .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#sssldojgpp .gt_column_spanner_outer:last-child {
+#hmzfqtdvim .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#sssldojgpp .gt_column_spanner {
+#hmzfqtdvim .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -945,10 +945,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#sssldojgpp .gt_spanner_row {
+#hmzfqtdvim .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#sssldojgpp .gt_group_heading {
+#hmzfqtdvim .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -973,7 +973,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#sssldojgpp .gt_empty_group_heading {
+#hmzfqtdvim .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -987,13 +987,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#sssldojgpp .gt_from_md > :first-child {
+#hmzfqtdvim .gt_from_md > :first-child {
 margin-top: 0;
 }
-#sssldojgpp .gt_from_md > :last-child {
+#hmzfqtdvim .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#sssldojgpp .gt_row {
+#hmzfqtdvim .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1011,7 +1011,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#sssldojgpp .gt_stub {
+#hmzfqtdvim .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1023,7 +1023,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sssldojgpp .gt_stub_row_group {
+#hmzfqtdvim .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1036,13 +1036,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#sssldojgpp .gt_row_group_first td {
+#hmzfqtdvim .gt_row_group_first td {
 border-top-width: 2px;
 }
-#sssldojgpp .gt_row_group_first th {
+#hmzfqtdvim .gt_row_group_first th {
 border-top-width: 2px;
 }
-#sssldojgpp .gt_summary_row {
+#hmzfqtdvim .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1051,14 +1051,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sssldojgpp .gt_first_summary_row {
+#hmzfqtdvim .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#sssldojgpp .gt_first_summary_row.thick {
+#hmzfqtdvim .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#sssldojgpp .gt_last_summary_row {
+#hmzfqtdvim .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1067,7 +1067,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sssldojgpp .gt_grand_summary_row {
+#hmzfqtdvim .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1076,7 +1076,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sssldojgpp .gt_first_grand_summary_row {
+#hmzfqtdvim .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1085,7 +1085,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#sssldojgpp .gt_last_grand_summary_row_top {
+#hmzfqtdvim .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1094,10 +1094,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#sssldojgpp .gt_striped {
+#hmzfqtdvim .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#sssldojgpp .gt_table_body {
+#hmzfqtdvim .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -1105,7 +1105,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#sssldojgpp .gt_footnotes {
+#hmzfqtdvim .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1118,7 +1118,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sssldojgpp .gt_footnote {
+#hmzfqtdvim .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -1126,7 +1126,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sssldojgpp .gt_sourcenotes {
+#hmzfqtdvim .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1139,57 +1139,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#sssldojgpp .gt_sourcenote {
+#hmzfqtdvim .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#sssldojgpp .gt_left {
+#hmzfqtdvim .gt_left {
 text-align: left;
 }
-#sssldojgpp .gt_center {
+#hmzfqtdvim .gt_center {
 text-align: center;
 }
-#sssldojgpp .gt_right {
+#hmzfqtdvim .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#sssldojgpp .gt_font_normal {
+#hmzfqtdvim .gt_font_normal {
 font-weight: normal;
 }
-#sssldojgpp .gt_font_bold {
+#hmzfqtdvim .gt_font_bold {
 font-weight: bold;
 }
-#sssldojgpp .gt_font_italic {
+#hmzfqtdvim .gt_font_italic {
 font-style: italic;
 }
-#sssldojgpp .gt_super {
+#hmzfqtdvim .gt_super {
 font-size: 65%;
 }
-#sssldojgpp .gt_footnote_marks {
+#hmzfqtdvim .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#sssldojgpp .gt_asterisk {
+#hmzfqtdvim .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#sssldojgpp .gt_indent_1 {
+#hmzfqtdvim .gt_indent_1 {
 text-indent: 5px;
 }
-#sssldojgpp .gt_indent_2 {
+#hmzfqtdvim .gt_indent_2 {
 text-indent: 10px;
 }
-#sssldojgpp .gt_indent_3 {
+#hmzfqtdvim .gt_indent_3 {
 text-indent: 15px;
 }
-#sssldojgpp .gt_indent_4 {
+#hmzfqtdvim .gt_indent_4 {
 text-indent: 20px;
 }
-#sssldojgpp .gt_indent_5 {
+#hmzfqtdvim .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -1239,20 +1239,20 @@ in the input data to pass multiple independent values to authors.
 Nestable variables must start with the same prefix. E.g.
 <code>affiliation_1</code>, <code>affiliation_2</code>, …,
 <code>affiliation_n</code> to pass several affiliations to authors.</p>
-<div id="ylznxkgqra" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#ylznxkgqra table {
+<div id="ksmizffdhc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ksmizffdhc table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#ylznxkgqra thead, #ylznxkgqra tbody, #ylznxkgqra tfoot, #ylznxkgqra tr, #ylznxkgqra td, #ylznxkgqra th {
+#ksmizffdhc thead, #ksmizffdhc tbody, #ksmizffdhc tfoot, #ksmizffdhc tr, #ksmizffdhc td, #ksmizffdhc th {
 border-style: none;
 }
-#ylznxkgqra p {
+#ksmizffdhc p {
 margin: 0;
 padding: 0;
 }
-#ylznxkgqra .gt_table {
+#ksmizffdhc .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -1277,11 +1277,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#ylznxkgqra .gt_caption {
+#ksmizffdhc .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#ylznxkgqra .gt_title {
+#ksmizffdhc .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -1292,7 +1292,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#ylznxkgqra .gt_subtitle {
+#ksmizffdhc .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -1303,7 +1303,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#ylznxkgqra .gt_heading {
+#ksmizffdhc .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -1314,12 +1314,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ylznxkgqra .gt_bottom_border {
+#ksmizffdhc .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ylznxkgqra .gt_col_headings {
+#ksmizffdhc .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -1333,7 +1333,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#ylznxkgqra .gt_col_heading {
+#ksmizffdhc .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1352,7 +1352,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#ylznxkgqra .gt_column_spanner_outer {
+#ksmizffdhc .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1363,13 +1363,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#ylznxkgqra .gt_column_spanner_outer:first-child {
+#ksmizffdhc .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#ylznxkgqra .gt_column_spanner_outer:last-child {
+#ksmizffdhc .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#ylznxkgqra .gt_column_spanner {
+#ksmizffdhc .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -1380,10 +1380,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#ylznxkgqra .gt_spanner_row {
+#ksmizffdhc .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#ylznxkgqra .gt_group_heading {
+#ksmizffdhc .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1408,7 +1408,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#ylznxkgqra .gt_empty_group_heading {
+#ksmizffdhc .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -1422,13 +1422,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#ylznxkgqra .gt_from_md > :first-child {
+#ksmizffdhc .gt_from_md > :first-child {
 margin-top: 0;
 }
-#ylznxkgqra .gt_from_md > :last-child {
+#ksmizffdhc .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#ylznxkgqra .gt_row {
+#ksmizffdhc .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1446,7 +1446,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#ylznxkgqra .gt_stub {
+#ksmizffdhc .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1458,7 +1458,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ylznxkgqra .gt_stub_row_group {
+#ksmizffdhc .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1471,13 +1471,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#ylznxkgqra .gt_row_group_first td {
+#ksmizffdhc .gt_row_group_first td {
 border-top-width: 2px;
 }
-#ylznxkgqra .gt_row_group_first th {
+#ksmizffdhc .gt_row_group_first th {
 border-top-width: 2px;
 }
-#ylznxkgqra .gt_summary_row {
+#ksmizffdhc .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1486,14 +1486,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ylznxkgqra .gt_first_summary_row {
+#ksmizffdhc .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#ylznxkgqra .gt_first_summary_row.thick {
+#ksmizffdhc .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#ylznxkgqra .gt_last_summary_row {
+#ksmizffdhc .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1502,7 +1502,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ylznxkgqra .gt_grand_summary_row {
+#ksmizffdhc .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1511,7 +1511,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ylznxkgqra .gt_first_grand_summary_row {
+#ksmizffdhc .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1520,7 +1520,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#ylznxkgqra .gt_last_grand_summary_row_top {
+#ksmizffdhc .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1529,10 +1529,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#ylznxkgqra .gt_striped {
+#ksmizffdhc .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#ylznxkgqra .gt_table_body {
+#ksmizffdhc .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -1540,7 +1540,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#ylznxkgqra .gt_footnotes {
+#ksmizffdhc .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1553,7 +1553,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ylznxkgqra .gt_footnote {
+#ksmizffdhc .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -1561,7 +1561,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ylznxkgqra .gt_sourcenotes {
+#ksmizffdhc .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1574,57 +1574,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#ylznxkgqra .gt_sourcenote {
+#ksmizffdhc .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#ylznxkgqra .gt_left {
+#ksmizffdhc .gt_left {
 text-align: left;
 }
-#ylznxkgqra .gt_center {
+#ksmizffdhc .gt_center {
 text-align: center;
 }
-#ylznxkgqra .gt_right {
+#ksmizffdhc .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#ylznxkgqra .gt_font_normal {
+#ksmizffdhc .gt_font_normal {
 font-weight: normal;
 }
-#ylznxkgqra .gt_font_bold {
+#ksmizffdhc .gt_font_bold {
 font-weight: bold;
 }
-#ylznxkgqra .gt_font_italic {
+#ksmizffdhc .gt_font_italic {
 font-style: italic;
 }
-#ylznxkgqra .gt_super {
+#ksmizffdhc .gt_super {
 font-size: 65%;
 }
-#ylznxkgqra .gt_footnote_marks {
+#ksmizffdhc .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#ylznxkgqra .gt_asterisk {
+#ksmizffdhc .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#ylznxkgqra .gt_indent_1 {
+#ksmizffdhc .gt_indent_1 {
 text-indent: 5px;
 }
-#ylznxkgqra .gt_indent_2 {
+#ksmizffdhc .gt_indent_2 {
 text-indent: 10px;
 }
-#ylznxkgqra .gt_indent_3 {
+#ksmizffdhc .gt_indent_3 {
 text-indent: 15px;
 }
-#ylznxkgqra .gt_indent_4 {
+#ksmizffdhc .gt_indent_4 {
 text-indent: 20px;
 }
-#ylznxkgqra .gt_indent_5 {
+#ksmizffdhc .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -1657,23 +1657,24 @@ text-indent: 25px;
   
 </table>
 </div>
+<p><a name="constants"></a></p>
 <p><strong>Constants</strong>: optional names that can be provided in
 the input data. These names are standardised and must be provided as
 is.</p>
-<div id="cjrqmkqits" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#cjrqmkqits table {
+<div id="jhyfilxwzk" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#jhyfilxwzk table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#cjrqmkqits thead, #cjrqmkqits tbody, #cjrqmkqits tfoot, #cjrqmkqits tr, #cjrqmkqits td, #cjrqmkqits th {
+#jhyfilxwzk thead, #jhyfilxwzk tbody, #jhyfilxwzk tfoot, #jhyfilxwzk tr, #jhyfilxwzk td, #jhyfilxwzk th {
 border-style: none;
 }
-#cjrqmkqits p {
+#jhyfilxwzk p {
 margin: 0;
 padding: 0;
 }
-#cjrqmkqits .gt_table {
+#jhyfilxwzk .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -1698,11 +1699,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#cjrqmkqits .gt_caption {
+#jhyfilxwzk .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#cjrqmkqits .gt_title {
+#jhyfilxwzk .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -1713,7 +1714,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#cjrqmkqits .gt_subtitle {
+#jhyfilxwzk .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -1724,7 +1725,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#cjrqmkqits .gt_heading {
+#jhyfilxwzk .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -1735,12 +1736,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cjrqmkqits .gt_bottom_border {
+#jhyfilxwzk .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cjrqmkqits .gt_col_headings {
+#jhyfilxwzk .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -1754,7 +1755,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#cjrqmkqits .gt_col_heading {
+#jhyfilxwzk .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1773,7 +1774,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#cjrqmkqits .gt_column_spanner_outer {
+#jhyfilxwzk .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1784,13 +1785,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#cjrqmkqits .gt_column_spanner_outer:first-child {
+#jhyfilxwzk .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#cjrqmkqits .gt_column_spanner_outer:last-child {
+#jhyfilxwzk .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#cjrqmkqits .gt_column_spanner {
+#jhyfilxwzk .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -1801,10 +1802,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#cjrqmkqits .gt_spanner_row {
+#jhyfilxwzk .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#cjrqmkqits .gt_group_heading {
+#jhyfilxwzk .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1829,7 +1830,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#cjrqmkqits .gt_empty_group_heading {
+#jhyfilxwzk .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -1843,13 +1844,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#cjrqmkqits .gt_from_md > :first-child {
+#jhyfilxwzk .gt_from_md > :first-child {
 margin-top: 0;
 }
-#cjrqmkqits .gt_from_md > :last-child {
+#jhyfilxwzk .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#cjrqmkqits .gt_row {
+#jhyfilxwzk .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1867,7 +1868,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#cjrqmkqits .gt_stub {
+#jhyfilxwzk .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1879,7 +1880,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cjrqmkqits .gt_stub_row_group {
+#jhyfilxwzk .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -1892,13 +1893,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#cjrqmkqits .gt_row_group_first td {
+#jhyfilxwzk .gt_row_group_first td {
 border-top-width: 2px;
 }
-#cjrqmkqits .gt_row_group_first th {
+#jhyfilxwzk .gt_row_group_first th {
 border-top-width: 2px;
 }
-#cjrqmkqits .gt_summary_row {
+#jhyfilxwzk .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1907,14 +1908,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cjrqmkqits .gt_first_summary_row {
+#jhyfilxwzk .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#cjrqmkqits .gt_first_summary_row.thick {
+#jhyfilxwzk .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#cjrqmkqits .gt_last_summary_row {
+#jhyfilxwzk .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1923,7 +1924,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cjrqmkqits .gt_grand_summary_row {
+#jhyfilxwzk .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -1932,7 +1933,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cjrqmkqits .gt_first_grand_summary_row {
+#jhyfilxwzk .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1941,7 +1942,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#cjrqmkqits .gt_last_grand_summary_row_top {
+#jhyfilxwzk .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -1950,10 +1951,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#cjrqmkqits .gt_striped {
+#jhyfilxwzk .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#cjrqmkqits .gt_table_body {
+#jhyfilxwzk .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -1961,7 +1962,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#cjrqmkqits .gt_footnotes {
+#jhyfilxwzk .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1974,7 +1975,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cjrqmkqits .gt_footnote {
+#jhyfilxwzk .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -1982,7 +1983,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cjrqmkqits .gt_sourcenotes {
+#jhyfilxwzk .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -1995,57 +1996,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#cjrqmkqits .gt_sourcenote {
+#jhyfilxwzk .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#cjrqmkqits .gt_left {
+#jhyfilxwzk .gt_left {
 text-align: left;
 }
-#cjrqmkqits .gt_center {
+#jhyfilxwzk .gt_center {
 text-align: center;
 }
-#cjrqmkqits .gt_right {
+#jhyfilxwzk .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#cjrqmkqits .gt_font_normal {
+#jhyfilxwzk .gt_font_normal {
 font-weight: normal;
 }
-#cjrqmkqits .gt_font_bold {
+#jhyfilxwzk .gt_font_bold {
 font-weight: bold;
 }
-#cjrqmkqits .gt_font_italic {
+#jhyfilxwzk .gt_font_italic {
 font-style: italic;
 }
-#cjrqmkqits .gt_super {
+#jhyfilxwzk .gt_super {
 font-size: 65%;
 }
-#cjrqmkqits .gt_footnote_marks {
+#jhyfilxwzk .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#cjrqmkqits .gt_asterisk {
+#jhyfilxwzk .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#cjrqmkqits .gt_indent_1 {
+#jhyfilxwzk .gt_indent_1 {
 text-indent: 5px;
 }
-#cjrqmkqits .gt_indent_2 {
+#jhyfilxwzk .gt_indent_2 {
 text-indent: 10px;
 }
-#cjrqmkqits .gt_indent_3 {
+#jhyfilxwzk .gt_indent_3 {
 text-indent: 15px;
 }
-#cjrqmkqits .gt_indent_4 {
+#jhyfilxwzk .gt_indent_4 {
 text-indent: 20px;
 }
-#cjrqmkqits .gt_indent_5 {
+#jhyfilxwzk .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -2118,20 +2119,20 @@ text-indent: 25px;
 variables don’t need to be provided in the input data and are ignored if
 supplied. You shouldn’t worry much about these variables unless you want
 to customise names or extend plume classes with new default names.</p>
-<div id="xamkiqowgs" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#xamkiqowgs table {
+<div id="okrrjgbhwe" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#okrrjgbhwe table {
 font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 -webkit-font-smoothing: antialiased;
 -moz-osx-font-smoothing: grayscale;
 }
-#xamkiqowgs thead, #xamkiqowgs tbody, #xamkiqowgs tfoot, #xamkiqowgs tr, #xamkiqowgs td, #xamkiqowgs th {
+#okrrjgbhwe thead, #okrrjgbhwe tbody, #okrrjgbhwe tfoot, #okrrjgbhwe tr, #okrrjgbhwe td, #okrrjgbhwe th {
 border-style: none;
 }
-#xamkiqowgs p {
+#okrrjgbhwe p {
 margin: 0;
 padding: 0;
 }
-#xamkiqowgs .gt_table {
+#okrrjgbhwe .gt_table {
 display: table;
 border-collapse: collapse;
 line-height: normal;
@@ -2156,11 +2157,11 @@ border-left-style: none;
 border-left-width: 2px;
 border-left-color: #D3D3D3;
 }
-#xamkiqowgs .gt_caption {
+#okrrjgbhwe .gt_caption {
 padding-top: 4px;
 padding-bottom: 4px;
 }
-#xamkiqowgs .gt_title {
+#okrrjgbhwe .gt_title {
 color: #333333;
 font-size: 125%;
 font-weight: initial;
@@ -2171,7 +2172,7 @@ padding-right: 5px;
 border-bottom-color: #FFFFFF;
 border-bottom-width: 0;
 }
-#xamkiqowgs .gt_subtitle {
+#okrrjgbhwe .gt_subtitle {
 color: #333333;
 font-size: 85%;
 font-weight: initial;
@@ -2182,7 +2183,7 @@ padding-right: 5px;
 border-top-color: #FFFFFF;
 border-top-width: 0;
 }
-#xamkiqowgs .gt_heading {
+#okrrjgbhwe .gt_heading {
 background-color: #FFFFFF;
 text-align: center;
 border-bottom-color: #FFFFFF;
@@ -2193,12 +2194,12 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xamkiqowgs .gt_bottom_border {
+#okrrjgbhwe .gt_bottom_border {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xamkiqowgs .gt_col_headings {
+#okrrjgbhwe .gt_col_headings {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -2212,7 +2213,7 @@ border-right-style: none;
 border-right-width: 1px;
 border-right-color: #D3D3D3;
 }
-#xamkiqowgs .gt_col_heading {
+#okrrjgbhwe .gt_col_heading {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2231,7 +2232,7 @@ padding-left: 5px;
 padding-right: 5px;
 overflow-x: hidden;
 }
-#xamkiqowgs .gt_column_spanner_outer {
+#okrrjgbhwe .gt_column_spanner_outer {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2242,13 +2243,13 @@ padding-bottom: 0;
 padding-left: 4px;
 padding-right: 4px;
 }
-#xamkiqowgs .gt_column_spanner_outer:first-child {
+#okrrjgbhwe .gt_column_spanner_outer:first-child {
 padding-left: 0;
 }
-#xamkiqowgs .gt_column_spanner_outer:last-child {
+#okrrjgbhwe .gt_column_spanner_outer:last-child {
 padding-right: 0;
 }
-#xamkiqowgs .gt_column_spanner {
+#okrrjgbhwe .gt_column_spanner {
 border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
@@ -2259,10 +2260,10 @@ overflow-x: hidden;
 display: inline-block;
 width: 100%;
 }
-#xamkiqowgs .gt_spanner_row {
+#okrrjgbhwe .gt_spanner_row {
 border-bottom-style: hidden;
 }
-#xamkiqowgs .gt_group_heading {
+#okrrjgbhwe .gt_group_heading {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2287,7 +2288,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 text-align: left;
 }
-#xamkiqowgs .gt_empty_group_heading {
+#okrrjgbhwe .gt_empty_group_heading {
 padding: 0.5px;
 color: #333333;
 background-color: #FFFFFF;
@@ -2301,13 +2302,13 @@ border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 vertical-align: middle;
 }
-#xamkiqowgs .gt_from_md > :first-child {
+#okrrjgbhwe .gt_from_md > :first-child {
 margin-top: 0;
 }
-#xamkiqowgs .gt_from_md > :last-child {
+#okrrjgbhwe .gt_from_md > :last-child {
 margin-bottom: 0;
 }
-#xamkiqowgs .gt_row {
+#okrrjgbhwe .gt_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2325,7 +2326,7 @@ border-right-color: #D3D3D3;
 vertical-align: middle;
 overflow-x: hidden;
 }
-#xamkiqowgs .gt_stub {
+#okrrjgbhwe .gt_stub {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2337,7 +2338,7 @@ border-right-color: #D3D3D3;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xamkiqowgs .gt_stub_row_group {
+#okrrjgbhwe .gt_stub_row_group {
 color: #333333;
 background-color: #FFFFFF;
 font-size: 100%;
@@ -2350,13 +2351,13 @@ padding-left: 5px;
 padding-right: 5px;
 vertical-align: top;
 }
-#xamkiqowgs .gt_row_group_first td {
+#okrrjgbhwe .gt_row_group_first td {
 border-top-width: 2px;
 }
-#xamkiqowgs .gt_row_group_first th {
+#okrrjgbhwe .gt_row_group_first th {
 border-top-width: 2px;
 }
-#xamkiqowgs .gt_summary_row {
+#okrrjgbhwe .gt_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -2365,14 +2366,14 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xamkiqowgs .gt_first_summary_row {
+#okrrjgbhwe .gt_first_summary_row {
 border-top-style: solid;
 border-top-color: #D3D3D3;
 }
-#xamkiqowgs .gt_first_summary_row.thick {
+#okrrjgbhwe .gt_first_summary_row.thick {
 border-top-width: 2px;
 }
-#xamkiqowgs .gt_last_summary_row {
+#okrrjgbhwe .gt_last_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2381,7 +2382,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xamkiqowgs .gt_grand_summary_row {
+#okrrjgbhwe .gt_grand_summary_row {
 color: #333333;
 background-color: #FFFFFF;
 text-transform: inherit;
@@ -2390,7 +2391,7 @@ padding-bottom: 8px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xamkiqowgs .gt_first_grand_summary_row {
+#okrrjgbhwe .gt_first_grand_summary_row {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2399,7 +2400,7 @@ border-top-style: double;
 border-top-width: 6px;
 border-top-color: #D3D3D3;
 }
-#xamkiqowgs .gt_last_grand_summary_row_top {
+#okrrjgbhwe .gt_last_grand_summary_row_top {
 padding-top: 8px;
 padding-bottom: 8px;
 padding-left: 5px;
@@ -2408,10 +2409,10 @@ border-bottom-style: double;
 border-bottom-width: 6px;
 border-bottom-color: #D3D3D3;
 }
-#xamkiqowgs .gt_striped {
+#okrrjgbhwe .gt_striped {
 background-color: rgba(128, 128, 128, 0.05);
 }
-#xamkiqowgs .gt_table_body {
+#okrrjgbhwe .gt_table_body {
 border-top-style: solid;
 border-top-width: 2px;
 border-top-color: #D3D3D3;
@@ -2419,7 +2420,7 @@ border-bottom-style: solid;
 border-bottom-width: 2px;
 border-bottom-color: #D3D3D3;
 }
-#xamkiqowgs .gt_footnotes {
+#okrrjgbhwe .gt_footnotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -2432,7 +2433,7 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xamkiqowgs .gt_footnote {
+#okrrjgbhwe .gt_footnote {
 margin: 0px;
 font-size: 90%;
 padding-top: 4px;
@@ -2440,7 +2441,7 @@ padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xamkiqowgs .gt_sourcenotes {
+#okrrjgbhwe .gt_sourcenotes {
 color: #333333;
 background-color: #FFFFFF;
 border-bottom-style: none;
@@ -2453,57 +2454,57 @@ border-right-style: none;
 border-right-width: 2px;
 border-right-color: #D3D3D3;
 }
-#xamkiqowgs .gt_sourcenote {
+#okrrjgbhwe .gt_sourcenote {
 font-size: 90%;
 padding-top: 4px;
 padding-bottom: 4px;
 padding-left: 5px;
 padding-right: 5px;
 }
-#xamkiqowgs .gt_left {
+#okrrjgbhwe .gt_left {
 text-align: left;
 }
-#xamkiqowgs .gt_center {
+#okrrjgbhwe .gt_center {
 text-align: center;
 }
-#xamkiqowgs .gt_right {
+#okrrjgbhwe .gt_right {
 text-align: right;
 font-variant-numeric: tabular-nums;
 }
-#xamkiqowgs .gt_font_normal {
+#okrrjgbhwe .gt_font_normal {
 font-weight: normal;
 }
-#xamkiqowgs .gt_font_bold {
+#okrrjgbhwe .gt_font_bold {
 font-weight: bold;
 }
-#xamkiqowgs .gt_font_italic {
+#okrrjgbhwe .gt_font_italic {
 font-style: italic;
 }
-#xamkiqowgs .gt_super {
+#okrrjgbhwe .gt_super {
 font-size: 65%;
 }
-#xamkiqowgs .gt_footnote_marks {
+#okrrjgbhwe .gt_footnote_marks {
 font-size: 75%;
 vertical-align: 0.4em;
 position: initial;
 }
-#xamkiqowgs .gt_asterisk {
+#okrrjgbhwe .gt_asterisk {
 font-size: 100%;
 vertical-align: 0;
 }
-#xamkiqowgs .gt_indent_1 {
+#okrrjgbhwe .gt_indent_1 {
 text-indent: 5px;
 }
-#xamkiqowgs .gt_indent_2 {
+#okrrjgbhwe .gt_indent_2 {
 text-indent: 10px;
 }
-#xamkiqowgs .gt_indent_3 {
+#okrrjgbhwe .gt_indent_3 {
 text-indent: 15px;
 }
-#xamkiqowgs .gt_indent_4 {
+#okrrjgbhwe .gt_indent_4 {
 text-indent: 20px;
 }
-#xamkiqowgs .gt_indent_5 {
+#okrrjgbhwe .gt_indent_5 {
 text-indent: 25px;
 }
 </style>
@@ -2534,12 +2535,15 @@ text-indent: 25px;
     <tr><td headers="name" class="gt_row gt_left gt_striped">corresponding</td>
 <td headers="Plume" class="gt_row gt_center gt_striped"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td>
 <td headers="PlumeQuarto" class="gt_row gt_center gt_striped"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
-    <tr><td headers="name" class="gt_row gt_left">deceased</td>
-<td headers="Plume" class="gt_row gt_center"></td>
-<td headers="PlumeQuarto" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
-    <tr><td headers="name" class="gt_row gt_left gt_striped">equal_contributor</td>
+    <tr><td headers="name" class="gt_row gt_left">contributor_rank</td>
+<td headers="Plume" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td>
+<td headers="PlumeQuarto" class="gt_row gt_center"></td></tr>
+    <tr><td headers="name" class="gt_row gt_left gt_striped">deceased</td>
 <td headers="Plume" class="gt_row gt_center gt_striped"></td>
 <td headers="PlumeQuarto" class="gt_row gt_center gt_striped"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
+    <tr><td headers="name" class="gt_row gt_left">equal_contributor</td>
+<td headers="Plume" class="gt_row gt_center"></td>
+<td headers="PlumeQuarto" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
   </tbody>
   
   
@@ -2566,18 +2570,491 @@ replacements.</p>
 <span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">family_name =</span> <span class="st">&quot;nom&quot;</span>,</span>
 <span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">literal_name =</span> <span class="st">&quot;nom_complet&quot;</span>,</span>
 <span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">email =</span> <span class="st">&quot;courriel&quot;</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">initials =</span> <span class="st">&quot;initiales&quot;</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    <span class="at">role =</span> <span class="st">&quot;role_v&quot;</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  )</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>)</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 10</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;      id prénom      nom   nom_complet initiales courriel orcid note  affiliation</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;       &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;list&gt;     </span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis       Dide… Denis Dide… DD        diderot… 0000… né e… &lt;tibble&gt;   </span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacqu… Rous… Jean-Jacqu… J-JR      roussea… 0000… &lt;NA&gt;  &lt;tibble&gt;   </span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 3     3 François-M… Arou… François-M… F-MA      arouet@… &lt;NA&gt;  dit … &lt;tibble&gt;   </span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean        Le R… Jean Le Ro… JLRd&#39;A    alember… 0000… né e… &lt;tibble&gt;   </span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: role_v &lt;list&gt;</span></span></code></pre></div>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">initials =</span> <span class="st">&quot;initiales&quot;</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  )</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>)</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 10</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;      id prénom         nom      nom_complet initiales courriel orcid role  note </span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;    &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot  Denis Dide… DD        diderot… 0000… Supe… né e…</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau Jean-Jacqu… J-JR      roussea… 0000… &lt;NA&gt;  &lt;NA&gt; </span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet   François-M… F-MA      arouet@… &lt;NA&gt;  &lt;NA&gt;  dit …</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond… Jean Le Ro… JLRd&#39;A    alember… 0000… Supe… né e…</span></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: affiliation &lt;list&gt;</span></span></code></pre></div>
+</div>
+<div id="defining-roles-and-contributors" class="section level2">
+<h2>Defining roles and contributors</h2>
+<p>You can add roles by creating specific role columns in the input data
+and indicate contributors using <code>1</code>:</p>
+<pre><code>#&gt; # A tibble: 4 × 4
+#&gt;   given_name     family_name        supervision writing
+#&gt;   &lt;chr&gt;          &lt;chr&gt;                    &lt;dbl&gt;   &lt;dbl&gt;
+#&gt; 1 Denis          Diderot                      1       1
+#&gt; 2 Jean-Jacques   Rousseau                    NA       1
+#&gt; 3 François-Marie Arouet                      NA       1
+#&gt; 4 Jean           Le Rond d&#39;Alembert           1       1</code></pre>
+<p>plume uses the <a href="https://credit.niso.org">Contributor Roles
+Taxonomy</a> (CRediT) by default (assuming the input data contains the
+<a href="#constants">appropriate columns</a>). You can specify your own
+roles via the <code>roles</code> parameter when creating a
+<code>plume</code> object. The <code>roles</code> parameter takes a
+vector of key-value pairs where keys define role columns and values the
+actual roles to use.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>Plume<span class="sc">$</span><span class="fu">new</span>(data, <span class="at">roles =</span> <span class="fu">c</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">supervision =</span> <span class="st">&quot;supervised the project&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">writing =</span> <span class="st">&quot;contributed to the writing&quot;</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>))</span></code></pre></div>
+</div>
+<div id="assigning-status-to-authors" class="section level2">
+<h2>Assigning status to authors</h2>
+<p>plume provides 4 methods to set particular status to authors:</p>
+<div id="oaoaqfwqhj" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#oaoaqfwqhj table {
+font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+}
+#oaoaqfwqhj thead, #oaoaqfwqhj tbody, #oaoaqfwqhj tfoot, #oaoaqfwqhj tr, #oaoaqfwqhj td, #oaoaqfwqhj th {
+border-style: none;
+}
+#oaoaqfwqhj p {
+margin: 0;
+padding: 0;
+}
+#oaoaqfwqhj .gt_table {
+display: table;
+border-collapse: collapse;
+line-height: normal;
+margin-left: auto;
+margin-right: auto;
+color: #333333;
+font-size: 16px;
+font-weight: normal;
+font-style: normal;
+background-color: #FFFFFF;
+width: auto;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #A8A8A8;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #A8A8A8;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_caption {
+padding-top: 4px;
+padding-bottom: 4px;
+}
+#oaoaqfwqhj .gt_title {
+color: #333333;
+font-size: 125%;
+font-weight: initial;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-color: #FFFFFF;
+border-bottom-width: 0;
+}
+#oaoaqfwqhj .gt_subtitle {
+color: #333333;
+font-size: 85%;
+font-weight: initial;
+padding-top: 3px;
+padding-bottom: 5px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-color: #FFFFFF;
+border-top-width: 0;
+}
+#oaoaqfwqhj .gt_heading {
+background-color: #FFFFFF;
+text-align: center;
+border-bottom-color: #FFFFFF;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_bottom_border {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_col_headings {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_col_heading {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 6px;
+padding-left: 5px;
+padding-right: 5px;
+overflow-x: hidden;
+}
+#oaoaqfwqhj .gt_column_spanner_outer {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: normal;
+text-transform: inherit;
+padding-top: 0;
+padding-bottom: 0;
+padding-left: 4px;
+padding-right: 4px;
+}
+#oaoaqfwqhj .gt_column_spanner_outer:first-child {
+padding-left: 0;
+}
+#oaoaqfwqhj .gt_column_spanner_outer:last-child {
+padding-right: 0;
+}
+#oaoaqfwqhj .gt_column_spanner {
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: bottom;
+padding-top: 5px;
+padding-bottom: 5px;
+overflow-x: hidden;
+display: inline-block;
+width: 100%;
+}
+#oaoaqfwqhj .gt_spanner_row {
+border-bottom-style: hidden;
+}
+#oaoaqfwqhj .gt_group_heading {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+text-align: left;
+}
+#oaoaqfwqhj .gt_empty_group_heading {
+padding: 0.5px;
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+vertical-align: middle;
+}
+#oaoaqfwqhj .gt_from_md > :first-child {
+margin-top: 0;
+}
+#oaoaqfwqhj .gt_from_md > :last-child {
+margin-bottom: 0;
+}
+#oaoaqfwqhj .gt_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+margin: 10px;
+border-top-style: solid;
+border-top-width: 1px;
+border-top-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 1px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 1px;
+border-right-color: #D3D3D3;
+vertical-align: middle;
+overflow-x: hidden;
+}
+#oaoaqfwqhj .gt_stub {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+}
+#oaoaqfwqhj .gt_stub_row_group {
+color: #333333;
+background-color: #FFFFFF;
+font-size: 100%;
+font-weight: initial;
+text-transform: inherit;
+border-right-style: solid;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+padding-left: 5px;
+padding-right: 5px;
+vertical-align: top;
+}
+#oaoaqfwqhj .gt_row_group_first td {
+border-top-width: 2px;
+}
+#oaoaqfwqhj .gt_row_group_first th {
+border-top-width: 2px;
+}
+#oaoaqfwqhj .gt_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#oaoaqfwqhj .gt_first_summary_row {
+border-top-style: solid;
+border-top-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_first_summary_row.thick {
+border-top-width: 2px;
+}
+#oaoaqfwqhj .gt_last_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_grand_summary_row {
+color: #333333;
+background-color: #FFFFFF;
+text-transform: inherit;
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#oaoaqfwqhj .gt_first_grand_summary_row {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-top-style: double;
+border-top-width: 6px;
+border-top-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_last_grand_summary_row_top {
+padding-top: 8px;
+padding-bottom: 8px;
+padding-left: 5px;
+padding-right: 5px;
+border-bottom-style: double;
+border-bottom-width: 6px;
+border-bottom-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_striped {
+background-color: rgba(128, 128, 128, 0.05);
+}
+#oaoaqfwqhj .gt_table_body {
+border-top-style: solid;
+border-top-width: 2px;
+border-top-color: #D3D3D3;
+border-bottom-style: solid;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_footnotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_footnote {
+margin: 0px;
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#oaoaqfwqhj .gt_sourcenotes {
+color: #333333;
+background-color: #FFFFFF;
+border-bottom-style: none;
+border-bottom-width: 2px;
+border-bottom-color: #D3D3D3;
+border-left-style: none;
+border-left-width: 2px;
+border-left-color: #D3D3D3;
+border-right-style: none;
+border-right-width: 2px;
+border-right-color: #D3D3D3;
+}
+#oaoaqfwqhj .gt_sourcenote {
+font-size: 90%;
+padding-top: 4px;
+padding-bottom: 4px;
+padding-left: 5px;
+padding-right: 5px;
+}
+#oaoaqfwqhj .gt_left {
+text-align: left;
+}
+#oaoaqfwqhj .gt_center {
+text-align: center;
+}
+#oaoaqfwqhj .gt_right {
+text-align: right;
+font-variant-numeric: tabular-nums;
+}
+#oaoaqfwqhj .gt_font_normal {
+font-weight: normal;
+}
+#oaoaqfwqhj .gt_font_bold {
+font-weight: bold;
+}
+#oaoaqfwqhj .gt_font_italic {
+font-style: italic;
+}
+#oaoaqfwqhj .gt_super {
+font-size: 65%;
+}
+#oaoaqfwqhj .gt_footnote_marks {
+font-size: 75%;
+vertical-align: 0.4em;
+position: initial;
+}
+#oaoaqfwqhj .gt_asterisk {
+font-size: 100%;
+vertical-align: 0;
+}
+#oaoaqfwqhj .gt_indent_1 {
+text-indent: 5px;
+}
+#oaoaqfwqhj .gt_indent_2 {
+text-indent: 10px;
+}
+#oaoaqfwqhj .gt_indent_3 {
+text-indent: 15px;
+}
+#oaoaqfwqhj .gt_indent_4 {
+text-indent: 20px;
+}
+#oaoaqfwqhj .gt_indent_5 {
+text-indent: 25px;
+}
+</style>
+<table class="gt_table" style="table-layout: fixed;" data-quarto-disable-processing="false" data-quarto-bootstrap="false">
+  <colgroup>
+    <col style="width:50%;" />
+    <col />
+    <col />
+  </colgroup>
+  <thead>
+    
+    <tr class="gt_col_headings">
+      <th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Name">Name</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="Plume">Plume</th>
+      <th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="PlumeQuarto">PlumeQuarto</th>
+    </tr>
+  </thead>
+  <tbody class="gt_table_body">
+    <tr><td headers="name" class="gt_row gt_left">set_corresponding_authors()</td>
+<td headers="Plume" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td>
+<td headers="PlumeQuarto" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
+    <tr><td headers="name" class="gt_row gt_left gt_striped">set_main_contributors()</td>
+<td headers="Plume" class="gt_row gt_center gt_striped"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td>
+<td headers="PlumeQuarto" class="gt_row gt_center gt_striped"></td></tr>
+    <tr><td headers="name" class="gt_row gt_left">set_cofirst_authors()</td>
+<td headers="Plume" class="gt_row gt_center"></td>
+<td headers="PlumeQuarto" class="gt_row gt_center"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
+    <tr><td headers="name" class="gt_row gt_left gt_striped">set_deceased()</td>
+<td headers="Plume" class="gt_row gt_center gt_striped"></td>
+<td headers="PlumeQuarto" class="gt_row gt_center gt_striped"><svg aria-hidden="true" role="img" viewBox="0 0 448 512" style="height:1em;width:0.88em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"></path></svg></td></tr>
+  </tbody>
+  
+  
+</table>
+</div>
+<p>By default, <code>set_*()</code> methods assign values by authors’
+id. You can change this behaviour at the object or method level using
+the <code>by</code>/<code>.by</code> parameters.</p>
+<p>Note that these methods are case insensitive.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(dplyr<span class="sc">::</span><span class="fu">select</span>(encyclopedists, given_name, family_name))</span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(dd, <span class="st">&quot;j-jr&quot;</span>, <span class="at">.by =</span> <span class="st">&quot;initials&quot;</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>aut</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name        literal_name    initials corresponding</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;           &lt;chr&gt;    &lt;lgl&gt;        </span></span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot            Denis Diderot   DD       TRUE         </span></span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau           Jean-Jacques R… J-JR     TRUE         </span></span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet             François-Marie… F-MA     FALSE        </span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;Alembert Jean Le Rond d… JLRd&#39;A   FALSE</span></span></code></pre></div>
+<p>Use <code>everyone()</code> to assign <code>TRUE</code> to all
+authors:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="fu">everyone</span>())</span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>aut</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name        literal_name    initials corresponding</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;           &lt;chr&gt;    &lt;lgl&gt;        </span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot            Denis Diderot   DD       TRUE         </span></span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau           Jean-Jacques R… J-JR     TRUE         </span></span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet             François-Marie… F-MA     TRUE         </span></span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;Alembert Jean Le Rond d… JLRd&#39;A   TRUE</span></span></code></pre></div>
 </div>
 <div id="pushing-data-into-yaml-headers" class="section level2">
 <h2>Pushing data into YAML headers</h2>
@@ -2591,12 +3068,11 @@ title: Encyclopédie
 Qui scribit bis legit</code></pre>
 <p>You can push information from the input data into the YAML header
 using the <code>to_yaml()</code> method:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice</span>(encyclopedists, <span class="dv">1</span>, <span class="dv">4</span>),</span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>  <span class="at">names =</span> <span class="fu">c</span>(<span class="at">role =</span> <span class="st">&quot;role_n&quot;</span>)</span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>)</span>
-<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">to_yaml</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice</span>(encyclopedists, <span class="dv">1</span>, <span class="dv">4</span>),</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span></span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>)</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">to_yaml</span>()</span></code></pre></div>
 <pre><code>---
 title: Encyclopédie
 author:
@@ -2605,12 +3081,12 @@ author:
       given: Denis
       family: Diderot
     email: diderot@encyclopediste.fr
-    phone: 00 00 00 01
+    phone: &#39;+1234&#39;
     orcid: 0000-0000-0000-0001
     note: born in 1713 in Langres
     roles:
-      - writing
       - supervision
+      - writing - original draft
     affiliations:
       - ref: aff1
   - id: aut2
@@ -2621,8 +3097,8 @@ author:
     orcid: 0000-0000-0000-0003
     note: born in 1717 in Paris
     roles:
-      - writing
       - supervision
+      - writing - original draft
     affiliations:
       - ref: aff1
       - ref: aff2
@@ -2639,12 +3115,11 @@ data.</p>
 <p>If the YAML header already has an <code>author</code> and
 <code>affiliations</code> keys, <code>to_yaml()</code> replaces old
 values with new ones.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice</span>(encyclopedists, <span class="dv">2</span>),</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>  <span class="at">names =</span> <span class="fu">c</span>(<span class="at">role =</span> <span class="st">&quot;role_n&quot;</span>)</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>)</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">to_yaml</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">slice</span>(encyclopedists, <span class="dv">2</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>)</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">to_yaml</span>()</span></code></pre></div>
 <pre><code>---
 title: Encyclopédie
 author:
@@ -2655,7 +3130,7 @@ author:
     email: rousseau@encyclopediste.fr
     orcid: 0000-0000-0000-0002
     roles:
-      - writing
+      - writing - original draft
     affiliations:
       - ref: aff1
 affiliations:
@@ -2665,60 +3140,10 @@ affiliations:
 
 Qui scribit bis legit</code></pre>
 </div>
-<div id="assigning-status-to-authors" class="section level2">
-<h2>Assigning status to authors</h2>
-<p>plume provides three methods to set particular status to authors:</p>
-<ul>
-<li><p><code>set_corresponding_authors()</code></p></li>
-<li><p><code>set_equal_contributor()</code></p></li>
-<li><p><code>set_deceased()</code></p></li>
-</ul>
-<p><code>set_equal_contributor()</code> and <code>set_deceased()</code>
-are specific to <code>PlumeQuarto</code>. You can specify equal
-contributors and deceased authors in <code>Plume</code> via the
-<code>note</code> variable.</p>
-<p>By default, <code>set_*()</code> methods assign values by authors’
-id. You can change this behaviour at the object (in
-<code>PlumeQuarto</code> only) or method level using the <code>by</code>
-parameter.</p>
-<p>Note that these methods are case insensitive.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(dplyr<span class="sc">::</span><span class="fu">select</span>(encyclopedists, given_name, family_name))</span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(dd, <span class="st">&quot;j-jr&quot;</span>, <span class="at">by =</span> <span class="st">&quot;initials&quot;</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>aut</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name        literal_name    initials corresponding</span></span>
-<span id="cb9-7"><a href="#cb9-7" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;           &lt;chr&gt;    &lt;lgl&gt;        </span></span>
-<span id="cb9-8"><a href="#cb9-8" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot            Denis Diderot   DD       TRUE         </span></span>
-<span id="cb9-9"><a href="#cb9-9" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau           Jean-Jacques R… J-JR     TRUE         </span></span>
-<span id="cb9-10"><a href="#cb9-10" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet             François-Marie… F-MA     FALSE        </span></span>
-<span id="cb9-11"><a href="#cb9-11" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;Alembert Jean Le Rond d… JLRd&#39;A   FALSE</span></span></code></pre></div>
-<p>Use <code>everyone()</code> to assign <code>TRUE</code> to all
-authors:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="fu">everyone</span>())</span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>aut</span>
-<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
-<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name        literal_name    initials corresponding</span></span>
-<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;           &lt;chr&gt;    &lt;lgl&gt;        </span></span>
-<span id="cb10-6"><a href="#cb10-6" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot            Denis Diderot   DD       TRUE         </span></span>
-<span id="cb10-7"><a href="#cb10-7" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau           Jean-Jacques R… J-JR     TRUE         </span></span>
-<span id="cb10-8"><a href="#cb10-8" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet             François-Marie… F-MA     TRUE         </span></span>
-<span id="cb10-9"><a href="#cb10-9" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;Alembert Jean Le Rond d… JLRd&#39;A   TRUE</span></span></code></pre></div>
-<p>Or its variant <code>everyone_but()</code> to assign
-<code>TRUE</code> to all but specific authors:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="fu">everyone_but</span>(jean), <span class="at">by =</span> <span class="st">&quot;given_name&quot;</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>aut</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 6</span></span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co">#&gt;      id given_name     family_name        literal_name    initials corresponding</span></span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;          &lt;chr&gt;              &lt;chr&gt;           &lt;chr&gt;    &lt;lgl&gt;        </span></span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis          Diderot            Denis Diderot   DD       TRUE         </span></span>
-<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-Jacques   Rousseau           Jean-Jacques R… J-JR     TRUE         </span></span>
-<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a><span class="co">#&gt; 3     3 François-Marie Arouet             François-Marie… F-MA     TRUE         </span></span>
-<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean           Le Rond d&#39;Alembert Jean Le Rond d… JLRd&#39;A   FALSE</span></span></code></pre></div>
-</div>
 <div id="getting-author-information" class="section level2">
 <h2>Getting author information</h2>
-<p><code>get_*()</code> methods format author information into character
+<p><code>get_*()</code> methods (available through the
+<code>Plume</code> class) format author information as character
 vectors. This is useful if you want to output author data in a document
 without using journal templates.</p>
 <div id="author-lists" class="section level3">
@@ -2736,96 +3161,116 @@ using the following keys:</p>
 <li><p><code>o</code> for ORCIDs</p></li>
 </ul>
 <p>The order of the keys determines the order of symbol categories.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists)</span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="fu">everyone</span>())</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;ac&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a><span class="co">#&gt; Denis Diderot1\*, Jean-Jacques Rousseau2\*, François-Marie Arouet2\*,</span></span>
-<span id="cb12-6"><a href="#cb12-6" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert1,3\*</span></span>
-<span id="cb12-7"><a href="#cb12-7" tabindex="-1"></a></span>
-<span id="cb12-8"><a href="#cb12-8" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;ca&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb12-9"><a href="#cb12-9" tabindex="-1"></a><span class="co">#&gt; Denis Diderot\*1, Jean-Jacques Rousseau\*2, François-Marie Arouet\*2,</span></span>
-<span id="cb12-10"><a href="#cb12-10" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert\*1,3</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists)</span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="fu">everyone</span>())</span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;ac&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; Denis Diderot1\*, Jean-Jacques Rousseau2\*, François-Marie Arouet2\*,</span></span>
+<span id="cb13-6"><a href="#cb13-6" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert1,3\*</span></span>
+<span id="cb13-7"><a href="#cb13-7" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;ca&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb13-9"><a href="#cb13-9" tabindex="-1"></a><span class="co">#&gt; Denis Diderot\*1, Jean-Jacques Rousseau\*2, François-Marie Arouet\*2,</span></span>
+<span id="cb13-10"><a href="#cb13-10" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert\*1,3</span></span></code></pre></div>
 <p>In addition, you can use <code>^</code> to superscript and
 <code>,</code> to separate symbols:</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="dv">1</span>, <span class="dv">4</span>)</span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;^a,^cn&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" tabindex="-1"></a><span class="co">#&gt; Denis Diderot^1,^\*†, Jean-Jacques Rousseau^2^, François-Marie Arouet^2^‡,</span></span>
-<span id="cb13-5"><a href="#cb13-5" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert^1,3,^\*§</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="dv">1</span>, <span class="dv">4</span>)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;^a,^cn&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a><span class="co">#&gt; Denis Diderot^1,^\*†, Jean-Jacques Rousseau^2^, François-Marie Arouet^2^‡,</span></span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert^1,3,^\*§</span></span></code></pre></div>
 <p>Use <code>format = NULL</code> or <code>format = &quot;&quot;</code> to ignore
 suffixes:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="cn">NULL</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>()</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a><span class="co">#&gt; Denis Diderot, Jean-Jacques Rousseau, François-Marie Arouet and Jean Le Rond d&#39;Alembert</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="cn">NULL</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>()</span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; Denis Diderot, Jean-Jacques Rousseau, François-Marie Arouet and Jean Le Rond d&#39;Alembert</span></span></code></pre></div>
 </div>
 <div id="affiliations-notes" class="section level3">
 <h3>Affiliations &amp; notes</h3>
 <p><code>get_affiliations()</code> and <code>get_notes()</code> return
 authors’ affiliations and notes.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_affiliations</span>()</span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a><span class="co">#&gt; ^1^Université de Paris</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a><span class="co">#&gt; ^2^Lycée Louis-le-Grand</span></span>
-<span id="cb15-4"><a href="#cb15-4" tabindex="-1"></a><span class="co">#&gt; ^3^Collège des Quatre-Nations</span></span>
-<span id="cb15-5"><a href="#cb15-5" tabindex="-1"></a></span>
-<span id="cb15-6"><a href="#cb15-6" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_notes</span>(<span class="at">sep =</span> <span class="st">&quot;: &quot;</span>, <span class="at">superscript =</span> <span class="cn">FALSE</span>)</span>
-<span id="cb15-7"><a href="#cb15-7" tabindex="-1"></a><span class="co">#&gt; †: born in 1713 in Langres</span></span>
-<span id="cb15-8"><a href="#cb15-8" tabindex="-1"></a><span class="co">#&gt; ‡: also known as Voltaire</span></span>
-<span id="cb15-9"><a href="#cb15-9" tabindex="-1"></a><span class="co">#&gt; §: born in 1717 in Paris</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_affiliations</span>()</span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt; ^1^Université de Paris</span></span>
+<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; ^2^Lycée Louis-le-Grand</span></span>
+<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; ^3^Collège des Quatre-Nations</span></span>
+<span id="cb16-5"><a href="#cb16-5" tabindex="-1"></a></span>
+<span id="cb16-6"><a href="#cb16-6" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_notes</span>(<span class="at">sep =</span> <span class="st">&quot;: &quot;</span>, <span class="at">superscript =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb16-7"><a href="#cb16-7" tabindex="-1"></a><span class="co">#&gt; †: born in 1713 in Langres</span></span>
+<span id="cb16-8"><a href="#cb16-8" tabindex="-1"></a><span class="co">#&gt; ‡: also known as Voltaire</span></span>
+<span id="cb16-9"><a href="#cb16-9" tabindex="-1"></a><span class="co">#&gt; §: born in 1717 in Paris</span></span></code></pre></div>
 </div>
 <div id="orcids" class="section level3">
 <h3>ORCIDs</h3>
 <p><code>get_orcids()</code> returns authors with their respective
 ORCID.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_orcids</span>(<span class="at">compact =</span> <span class="cn">FALSE</span>, <span class="at">icon =</span> <span class="cn">FALSE</span>, <span class="at">sep =</span> <span class="st">&quot; &quot;</span>)</span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a><span class="co">#&gt; Denis Diderot &lt;https://orcid.org/0000-0000-0000-0001&gt;</span></span>
-<span id="cb16-3"><a href="#cb16-3" tabindex="-1"></a><span class="co">#&gt; Jean-Jacques Rousseau &lt;https://orcid.org/0000-0000-0000-0002&gt;</span></span>
-<span id="cb16-4"><a href="#cb16-4" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert &lt;https://orcid.org/0000-0000-0000-0003&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_orcids</span>(<span class="at">compact =</span> <span class="cn">FALSE</span>, <span class="at">icon =</span> <span class="cn">FALSE</span>, <span class="at">sep =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; Denis Diderot &lt;https://orcid.org/0000-0000-0000-0001&gt;</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co">#&gt; Jean-Jacques Rousseau &lt;https://orcid.org/0000-0000-0000-0002&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert &lt;https://orcid.org/0000-0000-0000-0003&gt;</span></span></code></pre></div>
 </div>
 <div id="contact-details" class="section level3">
 <h3>Contact details</h3>
 <p>You can get contact details of corresponding authors using the
 <code>get_contact_details()</code> method:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>()</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; diderot@encyclopediste.fr (Denis Diderot)</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a><span class="co">#&gt; alembert@encyclopediste.fr (Jean Le Rond d&#39;Alembert)</span></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>(<span class="at">phone =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co">#&gt; diderot@encyclopediste.fr, 00 00 00 01 (Denis Diderot)</span></span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt; alembert@encyclopediste.fr (Jean Le Rond d&#39;Alembert)</span></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a></span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>(<span class="at">format =</span> <span class="st">&quot;{name}: {details}&quot;</span>)</span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt; Denis Diderot: diderot@encyclopediste.fr</span></span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert: alembert@encyclopediste.fr</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>()</span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a><span class="co">#&gt; diderot@encyclopediste.fr (Denis Diderot)</span></span>
+<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; alembert@encyclopediste.fr (Jean Le Rond d&#39;Alembert)</span></span>
+<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>(<span class="at">phone =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a><span class="co">#&gt; diderot@encyclopediste.fr, +1234 (Denis Diderot)</span></span>
+<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a><span class="co">#&gt; alembert@encyclopediste.fr (Jean Le Rond d&#39;Alembert)</span></span>
+<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contact_details</span>(<span class="at">format =</span> <span class="st">&quot;{name}: {details}&quot;</span>)</span>
+<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a><span class="co">#&gt; Denis Diderot: diderot@encyclopediste.fr</span></span>
+<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert: alembert@encyclopediste.fr</span></span></code></pre></div>
 </div>
 <div id="contributions" class="section level3">
 <h3>Contributions</h3>
 <p>plume provides a convenient way to generate contribution lists using
 the <code>get_contributions()</code> method.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists, <span class="at">names =</span> <span class="fu">c</span>(<span class="at">role =</span> <span class="st">&quot;role_n&quot;</span>))</span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>()</span>
-<span id="cb18-3"><a href="#cb18-3" tabindex="-1"></a><span class="co">#&gt; Writing: D.D., J.-J.R., F.-M.A. and J.L.R.d&#39;A.</span></span>
-<span id="cb18-4"><a href="#cb18-4" tabindex="-1"></a><span class="co">#&gt; Supervision: D.D. and J.L.R.d&#39;A.</span></span>
-<span id="cb18-5"><a href="#cb18-5" tabindex="-1"></a></span>
-<span id="cb18-6"><a href="#cb18-6" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>(</span>
-<span id="cb18-7"><a href="#cb18-7" tabindex="-1"></a>  <span class="at">roles_first =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb18-8"><a href="#cb18-8" tabindex="-1"></a>  <span class="at">by_author =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb18-9"><a href="#cb18-9" tabindex="-1"></a>  <span class="at">literal_names =</span> <span class="cn">TRUE</span></span>
-<span id="cb18-10"><a href="#cb18-10" tabindex="-1"></a>)</span>
-<span id="cb18-11"><a href="#cb18-11" tabindex="-1"></a><span class="co">#&gt; Denis Diderot: Writing and Supervision</span></span>
-<span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt; Jean-Jacques Rousseau: Writing</span></span>
-<span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt; François-Marie Arouet: Writing</span></span>
-<span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert: Writing and Supervision</span></span>
-<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a></span>
-<span id="cb18-16"><a href="#cb18-16" tabindex="-1"></a>aut_v <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists, <span class="at">names =</span> <span class="fu">c</span>(<span class="at">role =</span> <span class="st">&quot;role_v&quot;</span>))</span>
-<span id="cb18-17"><a href="#cb18-17" tabindex="-1"></a>aut_v<span class="sc">$</span><span class="fu">get_contributions</span>(<span class="at">roles_first =</span> <span class="cn">FALSE</span>, <span class="at">divider =</span> <span class="st">&quot; &quot;</span>)</span>
-<span id="cb18-18"><a href="#cb18-18" tabindex="-1"></a><span class="co">#&gt; D.D., J.-J.R., F.-M.A. and J.L.R.d&#39;A. contributed to the Encyclopédie</span></span>
-<span id="cb18-19"><a href="#cb18-19" tabindex="-1"></a><span class="co">#&gt; D.D. and J.L.R.d&#39;A. supervised the project</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>()</span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; Supervision: D.D. and J.L.R.d&#39;A.</span></span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; Writing - original draft: D.D., J.-J.R., F.-M.A. and J.L.R.d&#39;A.</span></span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>(</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  <span class="at">roles_first =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" tabindex="-1"></a>  <span class="at">by_author =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" tabindex="-1"></a>  <span class="at">literal_names =</span> <span class="cn">TRUE</span></span>
+<span id="cb19-9"><a href="#cb19-9" tabindex="-1"></a>)</span>
+<span id="cb19-10"><a href="#cb19-10" tabindex="-1"></a><span class="co">#&gt; Denis Diderot: Supervision and Writing - original draft</span></span>
+<span id="cb19-11"><a href="#cb19-11" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert: Supervision and Writing - original draft</span></span>
+<span id="cb19-12"><a href="#cb19-12" tabindex="-1"></a><span class="co">#&gt; Jean-Jacques Rousseau: Writing - original draft</span></span>
+<span id="cb19-13"><a href="#cb19-13" tabindex="-1"></a><span class="co">#&gt; François-Marie Arouet: Writing - original draft</span></span>
+<span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a>aut2 <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists, <span class="at">roles =</span> <span class="fu">c</span>(</span>
+<span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a>  <span class="at">supervision =</span> <span class="st">&quot;supervised the project&quot;</span>,</span>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a>  <span class="at">writing =</span> <span class="st">&quot;contributed to the Encyclopédie&quot;</span></span>
+<span id="cb19-18"><a href="#cb19-18" tabindex="-1"></a>))</span>
+<span id="cb19-19"><a href="#cb19-19" tabindex="-1"></a>aut2<span class="sc">$</span><span class="fu">get_contributions</span>(<span class="at">roles_first =</span> <span class="cn">FALSE</span>, <span class="at">divider =</span> <span class="st">&quot; &quot;</span>)</span>
+<span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a><span class="co">#&gt; D.D. and J.L.R.d&#39;A. supervised the project</span></span>
+<span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a><span class="co">#&gt; D.D., J.-J.R., F.-M.A. and J.L.R.d&#39;A. contributed to the Encyclopédie</span></span></code></pre></div>
 <p>By default, <code>get_contributions()</code> lists contributors in
 the order they’re defined. You can arrange contributors in alphabetical
 order with <code>alphabetical_order = TRUE</code>:</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>(<span class="at">alphabetical_order =</span> <span class="cn">TRUE</span>)</span>
-<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a><span class="co">#&gt; Writing: D.D., F.-M.A., J.-J.R. and J.L.R.d&#39;A.</span></span>
-<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a><span class="co">#&gt; Supervision: D.D. and J.L.R.d&#39;A.</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>(<span class="at">alphabetical_order =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a><span class="co">#&gt; Supervision: D.D. and J.L.R.d&#39;A.</span></span>
+<span id="cb20-3"><a href="#cb20-3" tabindex="-1"></a><span class="co">#&gt; Writing - original draft: D.D., F.-M.A., J.-J.R. and J.L.R.d&#39;A.</span></span></code></pre></div>
+<p>It’s possible to force one or more contributors to appear first in
+any given role by setting main contributors:</p>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_main_contributors</span>(<span class="at">supervision =</span> <span class="dv">4</span>, <span class="at">writing =</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">2</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>()</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a><span class="co">#&gt; Supervision: J.L.R.d&#39;A. and D.D.</span></span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt; Writing - original draft: F.-M.A., J.-J.R., D.D. and J.L.R.d&#39;A.</span></span></code></pre></div>
+<p>You can assign the same main contributors across multiple roles using
+the <code>.roles</code> parameter. E.g. to set a main contributor across
+all roles:</p>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_main_contributors</span>(jean, <span class="at">.roles =</span> aut<span class="sc">$</span><span class="fu">get_roles</span>(), <span class="at">.by =</span> <span class="st">&quot;given_name&quot;</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>()</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a><span class="co">#&gt; Supervision: J.L.R.d&#39;A. and D.D.</span></span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a><span class="co">#&gt; Writing - original draft: J.L.R.d&#39;A., D.D., J.-J.R. and F.-M.A.</span></span></code></pre></div>
+<p>Note that main contributors have the priority over the alphabetical
+ordering:</p>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_contributions</span>(<span class="at">alphabetical_order =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a><span class="co">#&gt; Supervision: J.L.R.d&#39;A. and D.D.</span></span>
+<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a><span class="co">#&gt; Writing - original draft: J.L.R.d&#39;A., D.D., F.-M.A. and J.-J.R.</span></span></code></pre></div>
 </div>
 </div>
 <div id="symbols" class="section level2">
@@ -2838,20 +3283,20 @@ order with <code>alphabetical_order = TRUE</code>:</p>
 <p>You can change symbols when creating a <code>plume</code> object
 using the parameter <code>symbols</code>.</p>
 <p>Use <code>NULL</code> to display numbers:</p>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists, <span class="at">symbols =</span> <span class="fu">list</span>(<span class="at">affiliation =</span> letters, <span class="at">note =</span> <span class="cn">NULL</span>))</span>
-<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a></span>
-<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;^a,n^&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
-<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a><span class="co">#&gt; Denis Diderot^a,1^, Jean-Jacques Rousseau^b^, François-Marie Arouet^b,2^,</span></span>
-<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert^a,c,3^</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> Plume<span class="sc">$</span><span class="fu">new</span>(encyclopedists, <span class="at">symbols =</span> <span class="fu">list</span>(<span class="at">affiliation =</span> letters, <span class="at">note =</span> <span class="cn">NULL</span>))</span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">get_author_list</span>(<span class="at">format =</span> <span class="st">&quot;^a,n^&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">enumerate</span>(<span class="at">last =</span> <span class="st">&quot;,</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="co">#&gt; Denis Diderot^a,1^, Jean-Jacques Rousseau^b^, François-Marie Arouet^b,2^,</span></span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt; Jean Le Rond d&#39;Alembert^a,c,3^</span></span></code></pre></div>
 <p>Use <code>NULL</code> as much as possible for symbols using numerous
 unique items (typically affiliations). If you have to use letters for a
 given category that has more unique items than letters, you can control
 the sequencing behaviour using the <code>sequential()</code> modifier,
 as shown below:</p>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>Plume<span class="sc">$</span><span class="fu">new</span>(</span>
-<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  encyclopedists,</span>
-<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>  <span class="at">symbols =</span> <span class="fu">list</span>(<span class="at">affiliation =</span> <span class="fu">sequential</span>(letters))</span>
-<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a>Plume<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb26-2"><a href="#cb26-2" tabindex="-1"></a>  encyclopedists,</span>
+<span id="cb26-3"><a href="#cb26-3" tabindex="-1"></a>  <span class="at">symbols =</span> <span class="fu">list</span>(<span class="at">affiliation =</span> <span class="fu">sequential</span>(letters))</span>
+<span id="cb26-4"><a href="#cb26-4" tabindex="-1"></a>)</span></code></pre></div>
 <p>By default, plume repeats elements when all elements in a vector are
 consumed. Using <code>sequential()</code> allows you to display a
 logical sequence of characters
@@ -2861,10 +3306,10 @@ logical sequence of characters
 <h2>Outputting as markdown content</h2>
 <p>To output author data as markdown content, use the chunk option
 <code>results: asis</code> in combination with <code>cat()</code>:</p>
-<div class="sourceCode" id="cb23"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>```{r}</span>
-<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>#| results: asis</span>
-<span id="cb23-3"><a href="#cb23-3" tabindex="-1"></a>aut$get_contributions() |&gt; cat(sep = &quot;; &quot;)</span>
-<span id="cb23-4"><a href="#cb23-4" tabindex="-1"></a>```</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode default"><code class="sourceCode default"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>```{r}</span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>#| results: asis</span>
+<span id="cb27-3"><a href="#cb27-3" tabindex="-1"></a>aut$get_contributions() |&gt; cat(sep = &quot;; &quot;)</span>
+<span id="cb27-4"><a href="#cb27-4" tabindex="-1"></a>```</span></code></pre></div>
 <p>Inline chunks output values “as is” by default and can be used as
 follows:</p>
 <p><code>`r aut$get_contact_details()`</code></p>

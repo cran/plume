@@ -21,6 +21,7 @@ Internal class that manages authors' status.
 <details open><summary>Inherited methods</summary>
 <ul>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
 </ul>
 </details>
@@ -30,7 +31,7 @@ Internal class that manages authors' status.
 \if{latex}{\out{\hypertarget{method-StatusSetter-new}{}}}
 \subsection{Method \code{new()}}{
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetter$new(...)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetter$new(..., by)}\if{html}{\out{</div>}}
 }
 
 }
@@ -40,18 +41,23 @@ Internal class that manages authors' status.
 \subsection{Method \code{set_corresponding_authors()}}{
 Set corresponding authors.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetter$set_corresponding_authors(..., by)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetter$set_corresponding_authors(..., .by, by = deprecated())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{One or more unquoted expressions separated by commas.
-Expressions matching values in the column defined by \code{by} determine
-corresponding authors. Matching of values is case-insensitive.}
+Expressions matching values in the column defined by \code{by}/\code{.by}
+determine corresponding authors. Matching of values is case-
+insensitive.}
 
-\item{\code{by}}{Variable used to set corresponding authors. By default, uses
+\item{\code{.by}}{Variable used to set corresponding authors. By default, uses
 authors' id.}
+
+\item{\code{by}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Please use the \code{.by} parameter instead.}
 }
 \if{html}{\out{</div>}}
 }

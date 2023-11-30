@@ -13,8 +13,7 @@
 #'   symbols = list(affiliation = sequential(letters))
 #' )
 #'
-#' aut$get_affiliations(sep = ": ", superscript = FALSE) |>
-#'   cat(sep = "\n")
+#' aut$get_affiliations(sep = ": ", superscript = FALSE)
 #' @export
 sequential <- function(x) {
   check_character(x, allow_duplicates = FALSE, allow_null = FALSE)
@@ -52,7 +51,8 @@ seq_vector.default <- function(x, n) {
 seq_vector.sequential <- function(x, n) {
   out <- map(seq(n - 1), \(i) c("", x))
   out <- c(out, list(x))
-  out <- reduce(out, expand_grid)
+  out <- set_names(out, seq_along(out))
+  out <- vctrs::vec_expand_grid(!!!out)
   out <- reduce(out, paste0)
   unique(out)
 }

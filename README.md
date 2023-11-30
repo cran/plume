@@ -5,6 +5,8 @@
 
 <!-- badges: start -->
 
+[![CRAN
+status](https://www.r-pkg.org/badges/version/plume)](https://CRAN.R-project.org/package=plume)
 [![R-CMD-check](https://github.com/arnaudgallou/plume/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/arnaudgallou/plume/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/arnaudgallou/plume/branch/main/graph/badge.svg)](https://app.codecov.io/gh/arnaudgallou/plume?branch=main)
@@ -16,9 +18,9 @@ plume provides tools for handling and generating author-related
 information for scientific writing in R Markdown and Quarto. The package
 implements two R6 classes:
 
-- `PlumeQuarto`: class that allows you to push or update author metadata
-  in the YAML header of Quarto files. The generated YAML complies with
-  Quarto’s [author and affiliations
+- `PlumeQuarto`: class that allows you to push author metadata in the
+  YAML header of Quarto files. The generated YAML complies with Quarto’s
+  [author and affiliations
   schemas](https://quarto.org/docs/journals/authors.html). This is the
   class to use if you work with journal templates.
 
@@ -52,20 +54,20 @@ more information such as email addresses, ORCIDs, affiliations, etc.
 library(plume)
 
 encyclopedists
-#> # A tibble: 4 × 12
-#>   given_name family_name email phone orcid role_n1 role_n2 role_v1 role_v2 note 
-#>   <chr>      <chr>       <chr> <chr> <chr> <chr>   <chr>   <chr>   <chr>   <chr>
-#> 1 Denis      Diderot     dide… 00 0… 0000… Writing Superv… contri… superv… born…
-#> 2 Jean-Jacq… Rousseau    rous… <NA>  0000… Writing <NA>    contri… <NA>    <NA> 
-#> 3 François-… Arouet      arou… <NA>  <NA>  Writing <NA>    contri… <NA>    also…
-#> 4 Jean       Le Rond d'… alem… <NA>  0000… Writing Superv… contri… superv… born…
-#> # ℹ 2 more variables: affiliation1 <chr>, affiliation2 <chr>
+#> # A tibble: 4 × 10
+#>   given_name     family_name        email  phone orcid supervision writing note 
+#>   <chr>          <chr>              <chr>  <chr> <chr>       <dbl>   <dbl> <chr>
+#> 1 Denis          Diderot            dider… +1234 0000…           1       1 born…
+#> 2 Jean-Jacques   Rousseau           rouss… <NA>  0000…          NA       1 <NA> 
+#> 3 François-Marie Arouet             aroue… <NA>  <NA>           NA       1 also…
+#> 4 Jean           Le Rond d'Alembert alemb… <NA>  0000…           1       1 born…
+#> # ℹ 2 more variables: affiliation_1 <chr>, affiliation_2 <chr>
 
 Plume$new(encyclopedists)
 #> # A tibble: 4 × 11
 #>      id given_name     family_name literal_name initials email phone orcid note 
 #>   <int> <chr>          <chr>       <chr>        <chr>    <chr> <chr> <chr> <chr>
-#> 1     1 Denis          Diderot     Denis Dider… DD       dide… 00 0… 0000… born…
+#> 1     1 Denis          Diderot     Denis Dider… DD       dide… +1234 0000… born…
 #> 2     2 Jean-Jacques   Rousseau    Jean-Jacque… J-JR     rous… <NA>  0000… <NA> 
 #> 3     3 François-Marie Arouet      François-Ma… F-MA     arou… <NA>  <NA>  also…
 #> 4     4 Jean           Le Rond d'… Jean Le Ron… JLRd'A   alem… <NA>  0000… born…
@@ -86,8 +88,7 @@ Consider the following example:
 ``` r
 aut <- PlumeQuarto$new(
   encyclopedists,
-  file = "file.qmd",
-  names = c(role = "role_n")
+  file = "file.qmd"
 )
 aut$set_corresponding_authors(1, 4)
 aut$to_yaml()
@@ -101,14 +102,14 @@ aut$to_yaml()
           given: Denis
           family: Diderot
         email: diderot@encyclopediste.fr
-        phone: 00 00 00 01
+        phone: '+1234'
         orcid: 0000-0000-0000-0001
         note: born in 1713 in Langres
         attributes:
           corresponding: true
         roles:
-          - writing
           - supervision
+          - writing - original draft
         affiliations:
           - ref: aff1
       - id: aut2
@@ -120,7 +121,7 @@ aut$to_yaml()
         attributes:
           corresponding: false
         roles:
-          - writing
+          - writing - original draft
         affiliations:
           - ref: aff2
       - id: aut3
@@ -132,7 +133,7 @@ aut$to_yaml()
         attributes:
           corresponding: false
         roles:
-          - writing
+          - writing - original draft
         affiliations:
           - ref: aff2
       - id: aut4
@@ -145,8 +146,8 @@ aut$to_yaml()
         attributes:
           corresponding: true
         roles:
-          - writing
           - supervision
+          - writing - original draft
         affiliations:
           - ref: aff1
           - ref: aff3
@@ -165,8 +166,8 @@ Alternatively, you can generate author information as character strings
 using `Plume`:
 
 ``` r
-aut <- Plume$new(encyclopedists, names = c(role = "role_n"))
-aut$set_corresponding_authors(diderot, by = "family_name")
+aut <- Plume$new(encyclopedists)
+aut$set_corresponding_authors(diderot, .by = "family_name")
 
 aut$get_author_list(format = "^a,^cn") |> enumerate(last = ",\n")
 #> Denis Diderot^1,^\*†, Jean-Jacques Rousseau^2^, François-Marie Arouet^2^‡,
@@ -186,22 +187,25 @@ aut$get_notes()
 #> ^§^born in 1717 in Paris
 
 aut$get_contributions()
-#> Writing: D.D., J.-J.R., F.-M.A. and J.L.R.d'A.
 #> Supervision: D.D. and J.L.R.d'A.
+#> Writing - original draft: D.D., J.-J.R., F.-M.A. and J.L.R.d'A.
 
-aut_v <- Plume$new(
+aut2 <- Plume$new(
   encyclopedists,
-  names = c(role = "role_v"),
+  roles = c(
+    supervision = "supervised the project",
+    writing = "contributed to the Encyclopédie"
+  ),
   symbols = list(affiliation = letters)
 )
 
-aut_v$get_author_list(format = "^a^") |> enumerate(last = ",\n")
+aut2$get_author_list(format = "^a^") |> enumerate(last = ",\n")
 #> Denis Diderot^a^, Jean-Jacques Rousseau^b^, François-Marie Arouet^b^,
 #> Jean Le Rond d'Alembert^a,c^
 
-aut_v$get_contributions(roles_first = FALSE, divider = " ")
-#> D.D., J.-J.R., F.-M.A. and J.L.R.d'A. contributed to the Encyclopédie
+aut2$get_contributions(roles_first = FALSE, divider = " ")
 #> D.D. and J.L.R.d'A. supervised the project
+#> D.D., J.-J.R., F.-M.A. and J.L.R.d'A. contributed to the Encyclopédie
 ```
 
 ## Acknowledgements

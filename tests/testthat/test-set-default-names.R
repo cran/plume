@@ -3,6 +3,7 @@ test_that("set_default_names() sets new plume names", {
     initials = "initiales",
     literal_name = "nom_complet",
     corresponding = "correspondant",
+    contributor_rank = "rang_contributeur",
     given_name = "prénom",
     family_name = "nom",
     email = "courriel",
@@ -30,17 +31,18 @@ test_that("set_default_names() sets new plume names", {
 
   nms <- set_default_names(foo = "foo", analysis = "bar")
 
-  expect_equal(nms, .names)
+  expect_equal(nms, .names_plume)
 })
 
 # Errors ----
 
 test_that("set_default_names() gives meaningful error messages", {
   expect_snapshot({
+    (expect_error(set_default_names()))
     (expect_error(set_default_names(1)))
     (expect_error(set_default_names("a")))
     (expect_error(set_default_names(x = "a", y = "a")))
     (expect_error(set_default_names(x = "a", x = "b")))
-    (expect_error(set_default_names(.plume_quarto = 1)))
+    (expect_error(set_default_names(given_name = "nom", .plume_quarto = 1)))
   })
 })

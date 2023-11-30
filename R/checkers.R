@@ -1,9 +1,9 @@
 has_uppercase <- function(x) {
-  string_detect(x, "\\p{Lu}")
+  str_detect(x, "\\p{Lu}")
 }
 
 detect_name <- function(x, name) {
-  string_detect(names(x), name)
+  str_detect(names(x), name)
 }
 
 has_name <- function(x, name) {
@@ -14,12 +14,12 @@ has_name.default <- function(x, name) {
   name %in% names(x)
 }
 
-has_name.regex <- function(x, name) {
+has_name.stringr_regex <- function(x, name) {
   any(detect_name(x, name))
 }
 
 has_metachr <- function(x) {
-  string_detect(x, r"{[\\\[\](){}|?$^*+]}")
+  str_detect(x, r"{[\\\[\](){}|?$^*+]}")
 }
 
 has_homonyms <- function(x) {
@@ -27,7 +27,7 @@ has_homonyms <- function(x) {
 }
 
 has_overflowing_ws <- function(x) {
-  string_detect(x, "^\\s|\\s$")
+  str_detect(x, "^\\s|\\s$")
 }
 
 is_empty <- function(x) {
@@ -55,13 +55,17 @@ is_nested <- function(x, item) {
 }
 
 is_blank <- function(x) {
-  string_detect(x, "^\\s*$")
+  str_detect(x, "^\\s*$")
 }
 
 is_not_na <- Negate(is.na)
 
-dots_are_call <- function(...) {
-  nargs() == 1L && is.call(expr(...))
+are_credit_roles <- function(x) {
+  all(x %in% credit_roles()) || all(x %in% credit_roles(FALSE))
+}
+
+are_calls <- function(...) {
+  all(map_vec(enexprs(...), is.call))
 }
 
 search_ <- function(x, callback, na_rm = TRUE, n = 1) {
@@ -76,7 +80,8 @@ search_ <- function(x, callback, na_rm = TRUE, n = 1) {
   if (!is.null(n)) {
     failed <- failed[n]
   }
-  set_names(x[failed], failed)
+  nms <- if (is_named(failed)) names(failed) else failed
+  set_names(x[failed], nms)
 }
 
 is_type <- function(x, type) {
@@ -119,6 +124,14 @@ abort_check <- function(
     msg <- c(msg, bullets)
   }
   abort(msg, ..., call = call)
+}
+
+check_dots_not_empty <- function() {
+  dots <- substitute(...(), caller_env())
+  if (!is.null(dots)) {
+    return(invisible(NULL))
+  }
+  abort_check(msg = "`...` must not be empty.")
 }
 
 check_named <- function(x, allow_homonyms = FALSE, ..., arg = caller_arg(x)) {
@@ -253,7 +266,7 @@ check_suffix_format <- function(x, allowed, arg = caller_arg(x)) {
 }
 
 path_is_relative <- function(x) {
-  !string_detect(x, "^(/|[A-Za-z]:|\\\\|~)")
+  !str_detect(x, "^(/|[A-Za-z]:|\\\\|~)")
 }
 
 check_path <- function(x, ..., arg = caller_arg(x)) {
@@ -269,13 +282,13 @@ check_path <- function(x, ..., arg = caller_arg(x)) {
 }
 
 file_ext <- function(x) {
-  string_extract(x, "(?<=\\.)[^.]+$")
+  str_extract(x, "(?<=\\.)[^.]+$")
 }
 
 check_file <- function(x, extension, ..., arg = caller_arg(x)) {
   check_string(x, allow_empty = FALSE, arg = arg)
   ext <- file_ext(x)
-  if (is_not_na(ext) && includes(ext, extension)) {
+  if (is_not_na(ext) && vec_in(ext, extension)) {
     check_path(x, arg = arg)
     return(invisible(NULL))
   }
@@ -284,28 +297,28 @@ check_file <- function(x, extension, ..., arg = caller_arg(x)) {
 }
 
 is_glueish <- function(x) {
-  is_string(x) && string_detect(x, "{[^}]+}")
+  is_string(x) && str_detect(x, "\\{[^}]+\\}")
 }
 
 check_glue <- function(x, allowed, ..., arg = caller_arg(x)) {
   msg <- NULL
   if (!missing(x) && is_glueish(x)) {
     vars <- extract_glue_vars(x)
-    if (all(includes(vars, allowed, ignore_case = FALSE))) {
+    if (all(vec_in(vars, allowed, ignore_case = FALSE))) {
       return(invisible(NULL))
     }
     invalid_var <- search_(vars, \(var) !var %in% allowed)
-    allowed_vars <- wrap(allowed, "`")
+    allowed_vars <- enumerate(wrap(allowed, "`"), last = " and/or ")
     msg <- c(
       glue("Invalid variable `{invalid_var}`."),
-      i = glue("`format` must use variables {enumerate(allowed_vars)}.")
+      i = glue("`format` must use variables {allowed_vars}.")
     )
   }
   abort_check("a glue specification", msg = msg, ..., arg = arg)
 }
 
 is_orcid <- function(x) {
-  string_detect(x, "^(?:\\d{4}-){3}\\d{3}(?:\\d|X)$")
+  str_detect(x, "^(?:\\d{4}-){3}\\d{3}(?:\\d|X)$")
 }
 
 check_orcid <- function(x, ..., arg = caller_arg(x)) {

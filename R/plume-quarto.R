@@ -11,7 +11,7 @@
 ))
 
 #' @title PlumeQuarto class
-#' @description Class that pushes or updates author metadata in the YAML header
+#' @description Class that pushes author metadata in the YAML header
 #'   of Quarto files.
 #' @examplesIf interactive()
 #' # Create a simple temporary file with a YAML header
@@ -28,8 +28,7 @@
 #' # you've just created
 #' aut <- PlumeQuarto$new(
 #'   encyclopedists,
-#'   file = tmp_file,
-#'   names = c(role = "role_n")
+#'   file = tmp_file
 #' )
 #'
 #' # And push author data to the YAML header
@@ -41,8 +40,7 @@
 #' # header accordingly
 #' aut <- PlumeQuarto$new(
 #'   dplyr::slice(encyclopedists, 2),
-#'   file = tmp_file,
-#'   names = c(role = "role_n")
+#'   file = tmp_file
 #' )
 #' aut$to_yaml()
 #'
@@ -50,29 +48,35 @@
 #' @export
 PlumeQuarto <- R6Class(
   classname = "PlumeQuarto",
-  inherit = StatusSetterQuarto,
+  inherit = StatusSetterPlumeQuarto,
   public = list(
     #' @description Create a `PlumeQuarto` object.
     #' @param data A data frame containing author-related data.
     #' @param file A `.qmd` file to insert author data into.
     #' @param names A vector of key-value pairs specifying custom names to use,
     #'   where keys are default names and values their respective replacements.
-    #' @param credit_roles Should the `r link("crt")` be used? See
-    #'   `vignette("using-credit-roles")` for details.
+    #' @param roles A vector of key-value pairs defining roles where keys
+    #'   identify columns and values describe the actual roles to use.
+    #' @param credit_roles `r lifecycle::badge("deprecated")`
+    #'
+    #'   It is now recommended to use `roles = credit_roles()` to use the
+    #'   `r link("crt")`.
     #' @param initials_given_name Should the initials of given names be used?
     #' @param by A character string defining the default variable used to assign
-    #'   authors' status in all `set_*()` methods. By default, uses authors' id.
+    #'   specific metadata to authors in all `set_*()` methods. By default, uses
+    #'   authors' id.
     #' @return A `PlumeQuarto` object.
     initialize = function(
         data,
         file,
         names = NULL,
+        roles = credit_roles(),
         credit_roles = FALSE,
         initials_given_name = FALSE,
         by = NULL
     ) {
       check_file(file, extension = "qmd")
-      super$initialize(data, names, credit_roles, initials_given_name, by = by)
+      super$initialize(data, names, roles, credit_roles, initials_given_name, by = by)
       private$file <- file
       private$id <- private$pick("id")
     },
@@ -191,7 +195,7 @@ PlumeQuarto <- R6Class(
     },
 
     author_metadata = function() {
-      if (!private$has_col(paste0("^", private$meta_prefix))) {
+      if (!private$has_col(begins_with(private$meta_prefix))) {
         return()
       }
       select(private$plume, starts_with(private$meta_prefix))
@@ -230,9 +234,9 @@ parse_affiliation <- function(x) {
     return(set_names(x, "name"))
   }
   keys <- collapse(affiliation_keys, sep = "|")
-  keys_regex <- paste0("\\b(?:", keys, ")")
-  nms <- string_extract_all(x, sprintf("%s(?==)", keys_regex))
-  els <- string_split(x, sprintf("\\s*%s=\\s*", keys_regex))[-1]
+  keys_regex <- paste0("\\b(?i:", keys, ")")
+  nms <- str_extract_all(x, sprintf("%s(?==)", keys_regex), simplify = TRUE)
+  els <- str_split_1(x, sprintf("\\s*%s=\\s*", keys_regex))[-1]
   set_names(els, tolower(nms))
 }
 
@@ -241,5 +245,5 @@ make_affiliation_id <- function(x) {
 }
 
 has_affiliation_sep <- function(x) {
-  string_contain(x, "=")
+  str_contain(x, "=")
 }

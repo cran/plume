@@ -5,11 +5,12 @@
     Output
       List of 2
        $ public   :List of 4
-        ..$ internals  :List of 4
-        .. ..$ id           : chr "id"
-        .. ..$ initials     : chr "initiales"
-        .. ..$ literal_name : chr "nom_complet"
-        .. ..$ corresponding: chr "correspondant"
+        ..$ internals  :List of 5
+        .. ..$ id              : chr "id"
+        .. ..$ initials        : chr "initiales"
+        .. ..$ literal_name    : chr "nom_complet"
+        .. ..$ corresponding   : chr "correspondant"
+        .. ..$ contributor_rank: chr "rang_contributeur"
         ..$ primaries  :List of 2
         .. ..$ given_name : chr "prénom"
         .. ..$ family_name: chr "nom"
@@ -43,6 +44,12 @@
 # set_default_names() gives meaningful error messages
 
     Code
+      (expect_error(set_default_names()))
+    Output
+      <error/rlang_error>
+      Error:
+      ! `...` must not be empty.
+    Code
       (expect_error(set_default_names(1)))
     Output
       <error/rlang_error>
@@ -67,7 +74,7 @@
       Error:
       ! `...` must have unique input names.
     Code
-      (expect_error(set_default_names(.plume_quarto = 1)))
+      (expect_error(set_default_names(given_name = "nom", .plume_quarto = 1)))
     Output
       <error/rlang_error>
       Error:

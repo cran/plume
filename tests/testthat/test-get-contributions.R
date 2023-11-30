@@ -1,5 +1,5 @@
 test_that("get_contributions() return authors' contributions", {
-  aut <- Plume$new(basic_df())
+  aut <- Plume$new(basic_df, roles = c(analysis = "a", writing = "b"))
 
   expect_s3_class(aut$get_contributions(), "plm")
 
@@ -50,18 +50,21 @@ test_that("get_contributions() returns `NULL` if no contributions", {
   aut <- Plume$new(data.frame(
     given_name = "Zip",
     family_name = "Zap",
-    role = ""
+    analysis = ""
   ))
   expect_null(aut$get_contributions())
 })
 
 test_that("get_contributions() rearranges authors only (#18)", {
-  aut <- Plume$new(data.frame(
-    given_name = c("Zip", "Pim"),
-    family_name = c("Zap", "Pam"),
-    role_1 = c("z", NA),
-    role_2 = c("a", "a")
-  ))
+  aut <- Plume$new(
+    data.frame(
+      given_name = c("Zip", "Pim"),
+      family_name = c("Zap", "Pam"),
+      role_1 = c(1, NA),
+      role_2 = c(1, 1)
+    ),
+    roles = c(role_1 = "z", role_2 = "a")
+  )
 
   expect_equal(
     aut$get_contributions(alphabetical_order = TRUE),
@@ -74,12 +77,15 @@ test_that("get_contributions() rearranges authors only (#18)", {
 })
 
 test_that("get_contributions() handles namesakes (#15)", {
-  aut <- Plume$new(data.frame(
-    given_name = c("Zip", "Zip"),
-    family_name = c("Zap", "Zap"),
-    role_1 = c("a", NA),
-    role_2 = c("b", "b")
-  ))
+  aut <- Plume$new(
+    data.frame(
+      given_name = c("Zip", "Zip"),
+      family_name = c("Zap", "Zap"),
+      role_1 = c(1, NA),
+      role_2 = c(1, 1)
+    ),
+    roles = c(role_1 = "a", role_2 = "b")
+  )
 
   expect_equal(
     aut$get_contributions(roles_first = FALSE),
@@ -97,7 +103,7 @@ test_that("get_contributions() reorders CRediT roles alphabetically", {
     family_name = c("Zap", "Rac"),
     writing = c(1, NA),
     analysis = c(NA, 1)
-  ), credit_roles = TRUE)
+  ), roles = credit_roles())
 
   expect_equal(
     aut$get_contributions(),
@@ -105,10 +111,78 @@ test_that("get_contributions() reorders CRediT roles alphabetically", {
   )
 })
 
+test_that("set_main_contributors() ranks contributors", {
+  aut <- Plume$new(
+    data.frame(
+      given_name = c("C", "B", "A"),
+      family_name = c("C", "B", "A"),
+      writing = rep(1, 3),
+      analysis = rep(1, 3)
+    ),
+    roles = c(writing = "Writing", analysis = "Analysis")
+  )
+
+  aut$set_main_contributors(3, 2, .roles = "writing")
+  expect_equal(
+    aut$get_contributions(),
+    c("Writing: A.A., B.B. and C.C.", "Analysis: C.C., B.B. and A.A.")
+  )
+
+  aut$set_main_contributors(2, .roles = "writing")
+  expect_equal(
+    aut$get_contributions(alphabetical_order = TRUE),
+    c("Writing: B.B., A.A. and C.C.", "Analysis: A.A., B.B. and C.C.")
+  )
+
+  aut$set_main_contributors(3, .roles = c("writing", "analysis", "test"))
+  expect_equal(
+    aut$get_contributions(),
+    c("Writing: A.A., C.C. and B.B.", "Analysis: A.A., C.C. and B.B.")
+  )
+
+  aut$set_main_contributors(writing = aa, analysis = bb, .by = "initials")
+  expect_equal(
+    aut$get_contributions(),
+    c("Writing: A.A., C.C. and B.B.", "Analysis: B.B., C.C. and A.A.")
+  )
+
+  aut$set_main_contributors(
+    writing = c(aa, bb), analysis = bb,
+    .by = "initials"
+  )
+  expect_equal(
+    aut$get_contributions(),
+    c("Writing: A.A., B.B. and C.C.", "Analysis: B.B., C.C. and A.A.")
+  )
+})
+
+# Deprecation ----
+
+test_that("specifying roles inside columns is deprecated", {
+  expect_snapshot({
+    aut <- Plume$new(data.frame(
+      given_name = "Zip",
+      family_name = "Zap",
+      role = "a"
+    ))
+  })
+  expect_equal(aut$get_contributions(), "a: Z.Z.")
+})
+
+test_that("`credit_roles = TRUE` is deprecated", {
+  expect_snapshot({
+    aut <- Plume$new(
+      data.frame(given_name = "Zip", family_name = "Zap", analysis = 1),
+      credit_roles = TRUE
+    )
+  })
+  expect_equal(aut$get_contributions(), "Formal analysis: Z.Z.")
+})
+
 # Errors ----
 
 test_that("get_contributions() gives meaningful error messages", {
-  aut <- Plume$new(basic_df())
+  aut <- Plume$new(basic_df)
 
   expect_snapshot({
     (expect_error(

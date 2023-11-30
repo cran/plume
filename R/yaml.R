@@ -20,8 +20,7 @@ as_json <- function(x) {
 }
 
 separate_yaml_header <- function(x) {
-  # use of stringr to preserve a match at the end of the string
-  stringr::str_split(x, "(?m:^|\\R)-{3}(?:\\R|$)")[[1]]
+  str_split_1(x, "(?m:^|\\R\\K)-{3}(?:\\R|$)")
 }
 
 as_verbatim_lgl <- function(x) {
@@ -46,7 +45,7 @@ yaml_inject <- function(lines, replacement) {
 }
 
 has_yaml <- function(x) {
-  string_detect(x, "(?s)^\\R*---\\R.*\\B---(?:\\R|$)")
+  str_detect(x, "(?s)^\\R*---\\R.*\\B---(?:\\R|$)")
 }
 
 check_has_yaml <- function(x) {
@@ -65,7 +64,7 @@ yaml_push <- function(what, file) {
   check_has_yaml(text)
   items <- separate_yaml_header(text)
   json <- as_json(what)
-  json <- json_update(items[2], json)
+  json <- json_update(items[[2]], json)
   if (is.null(json)) {
     return(invisible(NULL))
   }
