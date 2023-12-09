@@ -166,17 +166,17 @@ cat(read_file(tmp_file))
 aut <- Plume$new(encyclopedists)
 aut$set_corresponding_authors(everyone())
 
-aut$get_author_list(format = "ac") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ac") |> enumerate(last = ",\n")
 
-aut$get_author_list(format = "ca") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ca") |> enumerate(last = ",\n")
 
 ## -----------------------------------------------------------------------------
 aut$set_corresponding_authors(1, 4)
 
-aut$get_author_list(format = "^a,^cn") |> enumerate(last = ",\n")
+aut$get_author_list("^a,^cn") |> enumerate(last = ",\n")
 
 ## -----------------------------------------------------------------------------
-aut$get_author_list(format = NULL) |> enumerate()
+aut$get_author_list(suffix = NULL) |> enumerate()
 
 ## -----------------------------------------------------------------------------
 aut$get_affiliations()
@@ -228,7 +228,7 @@ str(plume:::.symbols)
 ## -----------------------------------------------------------------------------
 aut <- Plume$new(encyclopedists, symbols = list(affiliation = letters, note = NULL))
 
-aut$get_author_list(format = "^a,n^") |> enumerate(last = ",\n")
+aut$get_author_list("^a,n^") |> enumerate(last = ",\n")
 
 ## ---- eval = FALSE------------------------------------------------------------
 #  Plume$new(

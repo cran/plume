@@ -100,7 +100,7 @@ Plume <- R6Class(
         initials_given_name,
         family_name_first,
         interword_spacing,
-        by = NULL
+        by = by
       )
       check_list(symbols, force_names = TRUE)
       check_orcid_icon(orcid_icon)
@@ -111,10 +111,13 @@ Plume <- R6Class(
     },
 
     #' @description Get author list.
-    #' @param format A character string defining the format of symbols suffixing
+    #' @param suffix A character string defining the format of symbols suffixing
     #'   author names. See details.
+    #' @param format `r lifecycle::badge("deprecated")`
+    #'
+    #'   Please use the parameter `suffix` instead.
     #' @details
-    #' `format` lets you choose which symbol categories to suffix authors with,
+    #' `suffix` lets you choose which symbol categories to suffix authors with,
     #' using the following keys:
     #' * `a` for affiliations
     #' * `c` for corresponding authors
@@ -127,13 +130,16 @@ Plume <- R6Class(
     #' Use `","` to separate and `"^"` to superscript symbols.
     #' Use `NULL` or an empty string to list author names without suffixes.
     #' @return A character vector.
-    get_author_list = function(format = NULL) {
-      check_suffix_format(format, allowed = c("a", "c", "n", "o", "^", ","))
+    get_author_list = function(suffix = NULL, format = deprecated()) {
+      if (lifecycle::is_present(format)) {
+        lifecycle::deprecate_warn("0.2.0", "get_author_list(format)", "get_author_list(suffix)")
+        suffix <- format
+      }
       authors <- private$get("literal_name")
-      if (is_empty(format)) {
+      if (is_empty(suffix)) {
         out <- authors
       } else {
-        suffixes <- private$get_author_list_suffixes(format)
+        suffixes <- private$get_author_list_suffixes(suffix)
         out <- paste0(authors, suffixes)
       }
       as_plm(out)
@@ -223,6 +229,7 @@ Plume <- R6Class(
     #' @param literal_names Should literal names be used?
     #' @param divider Separator used to separate roles and authors. Uses `": "`
     #'   by default.
+    #' @param sep Separator used to separate roles or authors.
     #' @param sep_last Separator used to separate the last two roles or authors
     #'   if more than one item is associated to a role or author.
     #' @return A character vector.
@@ -233,6 +240,7 @@ Plume <- R6Class(
         dotted_initials = TRUE,
         literal_names = FALSE,
         divider = ": ",
+        sep = ", ",
         sep_last = " and "
     ) {
       role <- private$pick("role")
@@ -255,9 +263,10 @@ Plume <- R6Class(
       }
       out <- summarise(out, !!pars$var := enumerate(
         contribution_items(pars, by_author, alphabetical_order),
+        sep = sep,
         last = sep_last
       ), .by = all_of(pars$grp_var))
-      if (are_credit_roles(private$roles) || private$crt) {
+      if ((are_credit_roles(private$roles) || private$crt) && !by_author) {
         out <- arrange(out, role)
       }
       out <- collapse_cols(out, pars$format, sep = divider)
@@ -271,6 +280,7 @@ Plume <- R6Class(
     orcid_icon = NULL,
 
     get_author_list_suffixes = function(format) {
+      check_suffix_format(format, arg = "suffix")
       key_set <- als_key_set(format)
       vars <- unlist(private$pick(key_set, squash = FALSE))
       cols <- unname(vars)

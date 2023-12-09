@@ -154,7 +154,7 @@ tibble::tibble(
 )
 ```
 
-plume uses the `r plume:::link("crt")` (CRediT) by default (assuming the input data contains the [appropriate columns](#constants)). You can specify your own roles via the `roles` parameter when creating a `plume` object. The `roles` parameter takes a vector of key-value pairs where keys define role columns and values the actual roles to use.
+plume uses the `r plume:::link("crt")` (CRediT) by default (assuming the input data contains the [appropriate columns](#constants)). You can specify your own roles via the `roles` parameter when creating a `plume` object. The `roles` parameter takes a vector of key-value pairs where keys identify role columns and values define the actual roles to use.
 
 ```{r, eval = FALSE}
 Plume$new(data, roles = c(
@@ -259,7 +259,7 @@ cat(read_file(tmp_file))
 
 ### Author lists
 
-`get_author_list()` generates author lists. You can control the formatting of author suffixes (symbols linking authors to affiliations, notes and other metadata) using the `format` parameter. `format` takes a character string as argument and allows you to choose which symbol categories to suffix authors with, using the following keys:
+`get_author_list()` generates author lists. You can control the formatting of author suffixes (symbols linking authors to affiliations, notes and other metadata) using the `suffix` parameter. `suffix` takes a character string as argument and allows you to choose which symbol categories to suffix authors with, using the following keys:
 
 - `a` for affiliations
 
@@ -275,9 +275,9 @@ The order of the keys determines the order of symbol categories.
 aut <- Plume$new(encyclopedists)
 aut$set_corresponding_authors(everyone())
 
-aut$get_author_list(format = "ac") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ac") |> enumerate(last = ",\n")
 
-aut$get_author_list(format = "ca") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ca") |> enumerate(last = ",\n")
 ```
 
 In addition, you can use `^` to superscript and `,` to separate symbols:
@@ -285,13 +285,13 @@ In addition, you can use `^` to superscript and `,` to separate symbols:
 ```{r}
 aut$set_corresponding_authors(1, 4)
 
-aut$get_author_list(format = "^a,^cn") |> enumerate(last = ",\n")
+aut$get_author_list("^a,^cn") |> enumerate(last = ",\n")
 ```
 
-Use `format = NULL` or `format = ""` to ignore suffixes:
+Use `suffix = NULL` or `suffix = ""` to ignore suffixes:
 
 ```{r}
-aut$get_author_list(format = NULL) |> enumerate()
+aut$get_author_list(suffix = NULL) |> enumerate()
 ```
 
 ### Affiliations & notes
@@ -385,7 +385,7 @@ Use `NULL` to display numbers:
 ```{r}
 aut <- Plume$new(encyclopedists, symbols = list(affiliation = letters, note = NULL))
 
-aut$get_author_list(format = "^a,n^") |> enumerate(last = ",\n")
+aut$get_author_list("^a,n^") |> enumerate(last = ",\n")
 ```
 
 Use `NULL` as much as possible for symbols using numerous unique items (typically affiliations). If you have to use letters for a given category that has more unique items than letters, you can control the sequencing behaviour using the `sequential()` modifier, as shown below:

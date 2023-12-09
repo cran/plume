@@ -1,3 +1,15 @@
+# plume 0.2.1
+
+* Fixed `$get_contributions()` wrongly reordering authors when using CRediT roles and `by_author = TRUE` (#50).
+
+* `$get_contributions()` gains a new parameter `sep` that allows for finer control of how to separate contributors or roles (#49).
+
+* `$to_yaml()` now throws an error when invalid ORCID identifiers are found.
+
+* `Plume`'s parameter `by` is now working properly (#48).
+
+* The `format` parameter of `$get_author_list()` is now deprecated in favour of the less ambiguous parameter `suffix` (#47).
+
 # plume 0.2.0
 
 ## New features

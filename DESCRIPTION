@@ -1,7 +1,7 @@
 Type: Package
 Package: plume
 Title: A Simple Author Handler for Scientific Writing
-Version: 0.2.0
+Version: 0.2.1
 Authors@R: 
     person("Arnaud", "Gallou", , "arangacas@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-1002-4247"))
@@ -30,8 +30,8 @@ Language: en-GB
 LazyData: true
 RoxygenNote: 7.2.3
 NeedsCompilation: no
-Packaged: 2023-11-30 10:46:12 UTC; arnaudgallou
+Packaged: 2023-12-09 14:00:29 UTC; arnaudgallou
 Author: Arnaud Gallou [aut, cre, cph] (<https://orcid.org/0000-0002-1002-4247>)
 Maintainer: Arnaud Gallou <arangacas@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-11-30 11:20:03 UTC
+Date/Publication: 2023-12-09 14:20:02 UTC
