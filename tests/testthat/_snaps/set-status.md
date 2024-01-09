@@ -45,6 +45,12 @@
       Error:
       ! `.by` must be a character string.
     Code
+      (expect_error(aut$set_corresponding_authors(x <- y)))
+    Output
+      <error/rlang_error>
+      Error in `aut$set_corresponding_authors()`:
+      ! Can't match elements with `x <- y`.
+    Code
       (expect_error(aut$set_cofirst_authors(a, .by = "foo")))
     Output
       <error/rlang_error>

@@ -48,7 +48,7 @@ aut <- Plume$new(encyclopedists, roles = c(
 aut$get_contributions(roles_first = FALSE, divider = " ")
 }
 \section{Super classes}{
-\code{\link[plume:NameHandler]{plume::NameHandler}} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{\link[plume:StatusSetterPlume]{plume::StatusSetterPlume}} -> \code{Plume}
+\code{plume::NameHandler} -> \code{\link[plume:PlumeHandler]{plume::PlumeHandler}} -> \code{\link[plume:StatusSetter]{plume::StatusSetter}} -> \code{\link[plume:StatusSetterPlume]{plume::StatusSetterPlume}} -> \code{Plume}
 }
 \section{Methods}{
 \subsection{Public methods}{
@@ -184,15 +184,15 @@ A character vector.
 \subsection{Method \code{get_affiliations()}}{
 Get authors' affiliations.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Plume$get_affiliations(sep = "", superscript = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Plume$get_affiliations(superscript = TRUE, sep = "")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sep}}{Separator used to separate affiliation ids and affiliations.}
-
 \item{\code{superscript}}{Should affiliation ids be superscripted?}
+
+\item{\code{sep}}{Separator used to separate affiliation ids and affiliations.}
 }
 \if{html}{\out{</div>}}
 }
@@ -206,15 +206,15 @@ A character vector.
 \subsection{Method \code{get_notes()}}{
 Get authors' notes.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{Plume$get_notes(sep = "", superscript = TRUE)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{Plume$get_notes(superscript = TRUE, sep = "")}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{sep}}{Separator used to separate note ids and notes.}
-
 \item{\code{superscript}}{Should note ids be superscripted?}
+
+\item{\code{sep}}{Separator used to separate note ids and notes.}
 }
 \if{html}{\out{</div>}}
 }
@@ -313,8 +313,7 @@ By default, lists authors in the order they are defined in the data.}
 
 \item{\code{literal_names}}{Should literal names be used?}
 
-\item{\code{divider}}{Separator used to separate roles and authors. Uses \code{": "}
-by default.}
+\item{\code{divider}}{Separator used to separate roles from authors.}
 
 \item{\code{sep}}{Separator used to separate roles or authors.}
 

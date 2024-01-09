@@ -2,6 +2,7 @@ binder <- ContextBinder$new()
 
 #' @title StatusSetter class
 #' @description Internal class that manages authors' status.
+#' @keywords internal
 StatusSetter <- R6Class(
   classname = "StatusSetter",
   inherit = PlumeHandler,
@@ -46,20 +47,20 @@ StatusSetter <- R6Class(
       }
       by <- private$process_by(.by)
       binder$bind(private$plume[[by]])
+      dots <- collect_dots(...)
       private$plume <- mutate(
         private$plume,
-        !!private$pick(col) := vec_in(.data[[by]], collect_dots(...))
+        !!private$pick(col) := vec_in(.data[[by]], dots)
       )
       invisible(self)
     },
 
     process_by = function(by) {
       if (missing(by)) {
-        by <- private$by
-      } else {
-        check_string(by, allow_empty = FALSE, arg = ".by")
-        private$check_col(by)
+        return(private$by)
       }
+      check_string(by, allow_empty = FALSE, param = ".by")
+      private$check_col(by)
       by
     }
   )
@@ -67,6 +68,7 @@ StatusSetter <- R6Class(
 
 #' @title StatusSetterPlume class
 #' @description Internal class extending `StatusSetter` for `Plume`.
+#' @keywords internal
 StatusSetterPlume <- R6Class(
   classname = "StatusSetterPlume",
   inherit = StatusSetter,
@@ -96,7 +98,7 @@ StatusSetterPlume <- R6Class(
       by <- private$process_by(.by)
       vars <- private$pick("role", "contributor_rank", squash = FALSE)
       dots <- collect_dots(...)
-      if (!is_named(dots)) {
+      if (!any_is_named(dots)) {
         dots <- recycle_to_names(dots, nms = .roles)
       }
       out <- unnest(private$plume, col = all_of(vars$role))
@@ -109,6 +111,7 @@ StatusSetterPlume <- R6Class(
 
 #' @title StatusSetterPlumeQuarto class
 #' @description Internal class extending `StatusSetter` for `PlumeQuarto`.
+#' @keywords internal
 StatusSetterPlumeQuarto <- R6Class(
   classname = "StatusSetterPlumeQuarto",
   inherit = StatusSetter,

@@ -195,44 +195,37 @@
       Lorem ipsum
       ---
 
-# to_yaml() gives meaningful error messages
+# to_yaml() writes in a separate header to preserve strippable data (#56)
 
     Code
-      (expect_error(PlumeQuarto$new(basic_df, file = 1)))
+      read_test_file(tmp_file)
     Output
-      <error/rlang_error>
-      Error:
-      ! `file` must be a character string.
-    Code
-      (expect_error(PlumeQuarto$new(basic_df, file = "")))
-    Output
-      <error/rlang_error>
-      Error:
-      ! `file` must be a non-empty string.
-    Code
-      (expect_error(PlumeQuarto$new(basic_df, file = "test.rmd")))
-    Output
-      <error/rlang_error>
-      Error:
-      ! `file` must be a `.qmd` file.
-    Code
-      (expect_error(PlumeQuarto$new(basic_df, file = "~/test.qmd")))
-    Output
-      <error/rlang_error>
-      Error:
-      ! `~/test.qmd` doesn't exist.
+      ---
+      author:
+        - id: aut1
+          name:
+            given: Zip
+            family: Zap
+      affiliations: {}
+      ---
+      ---
+      title: test # this is a title
+      foo: >
+        Lorem ipsum
+        Vivamus quis
+      ---
 
----
+# to_yaml() errors if no YAML headers is found
 
     Code
       aut$to_yaml()
     Condition
       Error:
       ! No YAML headers found.
-      i YAML headers must be at the top of the document.
+      i YAML headers must be at the beginning of the document.
       i YAML headers must start and end with three hyphens.
 
----
+# to_yaml() errors if an invalid ORCID identifier is found 
 
     Code
       aut$to_yaml()

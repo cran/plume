@@ -151,6 +151,12 @@ test_that("set_main_contributors() ranks contributors", {
     c("Writing: B.B., A.A. and C.C.", "Analysis: A.A., B.B. and C.C.")
   )
 
+  aut$set_main_contributors(writing = c(3, 2))
+  expect_equal(
+    aut$get_contributions(),
+    c("Writing: A.A., B.B. and C.C.", "Analysis: C.C., B.B. and A.A.")
+  )
+
   aut$set_main_contributors(3, .roles = c("writing", "analysis", "test"))
   expect_equal(
     aut$get_contributions(),
@@ -216,6 +222,9 @@ test_that("get_contributions() gives meaningful error messages", {
     ))
     (expect_error(
       aut$get_contributions(literal_names = "")
+    ))
+    (expect_error(
+      aut$get_contributions(sep = 1)
     ))
     (expect_error(
       aut$get_contributions(sep_last = 1)

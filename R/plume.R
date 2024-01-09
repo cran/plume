@@ -146,19 +146,19 @@ Plume <- R6Class(
     },
 
     #' @description Get authors' affiliations.
-    #' @param sep Separator used to separate affiliation ids and affiliations.
     #' @param superscript Should affiliation ids be superscripted?
+    #' @param sep Separator used to separate affiliation ids and affiliations.
     #' @return A character vector.
-    get_affiliations = function(sep = "", superscript = TRUE) {
-      private$get_footnotes("affiliation", sep, superscript)
+    get_affiliations = function(superscript = TRUE, sep = "") {
+      private$get_footnotes("affiliation", superscript, sep)
     },
 
     #' @description Get authors' notes.
-    #' @param sep Separator used to separate note ids and notes.
     #' @param superscript Should note ids be superscripted?
+    #' @param sep Separator used to separate note ids and notes.
     #' @return A character vector.
-    get_notes = function(sep = "", superscript = TRUE) {
-      private$get_footnotes("note", sep, superscript)
+    get_notes = function(superscript = TRUE, sep = "") {
+      private$get_footnotes("note", superscript, sep)
     },
 
     #' @description Get authors' ORCID.
@@ -227,8 +227,7 @@ Plume <- R6Class(
     #'   By default, lists authors in the order they are defined in the data.
     #' @param dotted_initials Should initials be dot-separated?
     #' @param literal_names Should literal names be used?
-    #' @param divider Separator used to separate roles and authors. Uses `": "`
-    #'   by default.
+    #' @param divider Separator used to separate roles from authors.
     #' @param sep Separator used to separate roles or authors.
     #' @param sep_last Separator used to separate the last two roles or authors
     #'   if more than one item is associated to a role or author.
@@ -252,7 +251,7 @@ Plume <- R6Class(
         dotted_initials,
         literal_names
       ))
-      check_args("string", list(divider, sep_last))
+      check_args("string", list(divider, sep, sep_last))
       out <- unnest_drop(private$plume, role)
       if (is_empty(out)) {
         return()
@@ -280,10 +279,10 @@ Plume <- R6Class(
     orcid_icon = NULL,
 
     get_author_list_suffixes = function(format) {
-      check_suffix_format(format, arg = "suffix")
+      check_suffix_format(format, param = "suffix")
       key_set <- als_key_set(format)
-      vars <- unlist(private$pick(key_set, squash = FALSE))
-      cols <- unname(vars)
+      vars <- private$pick(key_set, squash = FALSE)
+      cols <- squash(vars)
       private$check_col(cols)
       out <- unnest(private$plume, cols = all_of(cols))
       out <- add_group_ids(out, vars)
@@ -295,7 +294,7 @@ Plume <- R6Class(
       als_make(out, .cols, format)
     },
 
-    get_footnotes = function(var, sep, superscript) {
+    get_footnotes = function(var, superscript, sep) {
       col <- private$pick(var)
       private$check_col(col)
       check_string(sep)
