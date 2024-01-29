@@ -13,13 +13,11 @@
 #' @title PlumeQuarto class
 #' @description Class that pushes author metadata in the YAML header
 #'   of Quarto files.
-#' @examplesIf interactive()
+#' @examples
 #' # Create a simple temporary file with a YAML header
 #' # containing a title
-#' tmp_file <- withr::local_tempfile(
-#'   lines = "---\ntitle: Encyclopédie\n---",
-#'   fileext = ".qmd"
-#' )
+#' tmp_file <- tempfile(fileext = ".qmd")
+#' readr::write_lines("---\ntitle: Encyclopédie\n---", tmp_file)
 #'
 #' # View the temporary file
 #' cat(readr::read_file(tmp_file))
@@ -45,6 +43,9 @@
 #' aut$to_yaml()
 #'
 #' cat(readr::read_file(tmp_file))
+#'
+#' # Clean up the temporary file
+#' unlink(tmp_file)
 #' @export
 PlumeQuarto <- R6Class(
   classname = "PlumeQuarto",
@@ -112,7 +113,7 @@ PlumeQuarto <- R6Class(
 
     author_tbl = function() {
       tibble(
-        id = paste0("aut", private$get("id")),
+        id = private$author_ids(),
         number = private$get("number"),
         name = tibble(
           given = private$get("given_name"),
@@ -131,6 +132,14 @@ PlumeQuarto <- R6Class(
         metadata = private$author_metadata(),
         affiliations = private$author_affiliations()
       )
+    },
+
+    author_ids = function() {
+      ids <- private$get("id")
+      if (length(ids) == 1L) {
+        return()
+      }
+      paste0("aut", ids)
     },
 
     author_orcid = function() {

@@ -135,15 +135,11 @@ PlumeHandler <- R6Class(
     },
 
     add_author_names = function() {
-      if (private$initials_given_name) {
-        given_name <- private$pick("given_name")
-        private$plume <- mutate(
-          private$plume,
-          !!given_name := make_initials(.data[[given_name]], dot = TRUE)
-        )
+      if (private$initials_given_name && private$has_uppercase("given_name")) {
+        private$make_initials("given_name", dot = TRUE)
       }
       private$add_literal_names()
-      if (any(has_uppercase(private$get("literal_name")))) {
+      if (private$has_uppercase("literal_name")) {
         private$add_initials()
       }
     },
@@ -161,11 +157,18 @@ PlumeHandler <- R6Class(
     },
 
     add_initials = function() {
-      vars <- private$pick("literal_name", "initials", squash = FALSE)
+      private$make_initials("literal_name", name = private$pick("initials"))
+    },
+
+    make_initials = function(col, name, dot = FALSE) {
+      col <- private$pick(col)
+      if (missing(name)) {
+        name <- col
+      }
       private$plume <- mutate(
         private$plume,
-        !!vars$initials := make_initials(.data[[vars$literal_name]]),
-        .after = all_of(vars$literal_name)
+        !!name := make_initials(.data[[col]], dot = dot),
+        .after = any_of(col)
       )
     },
 
@@ -190,6 +193,10 @@ PlumeHandler <- R6Class(
       private$has_col(var) && col_count(private$plume, var) > 1L
     },
 
+    has_uppercase = function(var) {
+      any(has_uppercase(private$get(var)))
+    },
+
     has_col = function(col) {
       if (any(has_metachr(col))) {
         col <- regex(col)
@@ -202,8 +209,9 @@ PlumeHandler <- R6Class(
       if (is.null(missing_col)) {
         return()
       }
+      bullets <- .col_bullets[[names(missing_col)]]
       msg <- glue("Column `{missing_col}` doesn't exist.")
-      abort_check(msg = msg, ...)
+      abort_check(msg = msg, bullets = bullets, ...)
     },
 
     check_authors = function() {

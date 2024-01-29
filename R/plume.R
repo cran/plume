@@ -200,10 +200,7 @@ Plume <- R6Class(
       check_args("bool", list(email, phone, fax, url))
       check_string(sep, allow_empty = FALSE)
       vars <- private$pick("corresponding", "literal_name", squash = FALSE)
-      private$check_col(vars$corresponding, bullets = c(
-        i = "Did you forget to assign corresponding authors?",
-        i = "Use `set_corresponding_authors()` to set corresponding authors."
-      ))
+      private$check_col(vars["corresponding"])
       arg_names <- get_params_set_to_true()
       if (is_empty(arg_names)) {
         return()
@@ -282,8 +279,8 @@ Plume <- R6Class(
       check_suffix_format(format, param = "suffix")
       key_set <- als_key_set(format)
       vars <- private$pick(key_set, squash = FALSE)
+      private$check_col(vars)
       cols <- squash(vars)
-      private$check_col(cols)
       out <- unnest(private$plume, cols = all_of(cols))
       out <- add_group_ids(out, vars)
       symbols <- list_assign(private$symbols, orcid = private$orcid_icon)
@@ -297,8 +294,8 @@ Plume <- R6Class(
     get_footnotes = function(var, superscript, sep) {
       col <- private$pick(var)
       private$check_col(col)
-      check_string(sep)
       check_bool(superscript)
+      check_string(sep)
       out <- unnest_drop(private$plume, col)
       if (is_empty(out)) {
         return()

@@ -1,3 +1,17 @@
+# plume 0.2.3
+
+* `$new(initials_given_name = TRUE)` no longer makes initials if names are written in a script that doesn't use letter cases (#73).
+
+* Fixed `PlumeQuarto`'s example no longer working with `withr` 3.0.0 due to a wrong usage of `local_tempfile()` (#70).
+
+* `$get_author_list()` now throws a more informative error if corresponding authors have not been set (#69).
+
+* The `.roles` parameter in `$set_main_contributors()` now propagates roles that are not already set to any unnamed expression. This allows you to set the same main contributors across all but a few specific roles in a single call (#65).
+
+* `$to_yaml()` now only adds the `affiliations` schema if there is at least one affiliation (#67).
+
+* `$to_yaml()` now only adds authors' id if there are at least two authors (#66).
+
 # plume 0.2.2
 
 ## Documentation changes

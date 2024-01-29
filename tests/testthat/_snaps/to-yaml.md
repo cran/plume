@@ -136,8 +136,7 @@
       ---
       title: test
       author:
-        - id: aut1
-          name:
+        - name:
             given: Zip
             family: Zap
           affiliations:
@@ -163,6 +162,18 @@
       x <- 1
       ```
 
+# to_yaml() doesn't add the `affiliations` schema if there're no affiliations
+
+    Code
+      read_test_file(tmp_file)
+    Output
+      ---
+      author:
+        - name:
+            given: Zip
+            family: Zap
+      ---
+
 # to_yaml() pushes data to empty YAML headers
 
     Code
@@ -170,13 +181,11 @@
     Output
       ---
       author:
-        - id: aut1
-          name:
+        - name:
             given: Zip
             family: Zap
           metadata:
             meta-foo: bar
-      affiliations: {}
       ---
 
 # to_yaml() preserves line breaks preceding `---` (#37)
@@ -186,11 +195,9 @@
     Output
       ---
       author:
-        - id: aut1
-          name:
+        - name:
             given: Zip
             family: Zap
-      affiliations: {}
       ---
       Lorem ipsum
       ---
@@ -202,11 +209,9 @@
     Output
       ---
       author:
-        - id: aut1
-          name:
+        - name:
             given: Zip
             family: Zap
-      affiliations: {}
       ---
       ---
       title: test # this is a title

@@ -26,10 +26,6 @@ has_homonyms <- function(x) {
   vec_duplicate_any(names(x))
 }
 
-any_is_named <- function(x) {
-  any(rlang::have_name(x))
-}
-
 has_overflowing_ws <- function(x) {
   str_detect(x, "^\\s|\\s$")
 }
@@ -68,10 +64,6 @@ are_credit_roles <- function(x) {
   all(x %in% credit_roles()) || all(x %in% credit_roles(FALSE))
 }
 
-are_calls <- function(...) {
-  all(map_vec(enexprs(...), is.call))
-}
-
 search_ <- function(x, callback, n = 1) {
   x <- vec_drop_na(x)
   have_passed <- if (missing(callback)) !x else !callback(x)
@@ -82,8 +74,11 @@ search_ <- function(x, callback, n = 1) {
   if (!is.null(n)) {
     failed <- failed[n]
   }
-  nms <- if (is_named(failed)) names(failed) else failed
-  set_names(x[failed], nms)
+  out <- x[failed]
+  if (is_named(x)) {
+    return(out)
+  }
+  set_names(out, failed)
 }
 
 without_indexed_error <- function(expr, ...) {
