@@ -8,20 +8,20 @@ knitr::opts_chunk$set(
 #  library(googlesheets4)
 #  
 #  gs4_create(
-#    name = "encyclopédie",
+#    name = "authors",
 #    sheets = plm_template()
 #  )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  read_sheet(gs4_find("encyclopédie"))
+#  read_sheet(gs4_find("authors"))
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  library(googlesheets4)
 #  library(plume)
 #  
-#  tbl_authors <- gs4_find("sheet_name") |> read_sheet()
+#  tbl_authors <- read_sheet(gs4_find("sheet_name"))
 #  
-#  PlumeQuarto$new(tbl_authors, file = "file.qmd")$
-#    set_corresponding_authors(1)$
-#    to_yaml()
+#  aut <- PlumeQuarto$new(tbl_authors, file = "file.qmd")
+#  aut$set_corresponding_authors(1)
+#  aut$to_yaml()
 

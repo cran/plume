@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -60,7 +60,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -352,11 +352,11 @@ purpose.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(googlesheets4)</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">gs4_create</span>(</span>
-<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;encyclopédie&quot;</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">name =</span> <span class="st">&quot;authors&quot;</span>,</span>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>  <span class="at">sheets =</span> <span class="fu">plm_template</span>()</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>)</span></code></pre></div>
-<p>The above will create a sheet named <code>encyclopédie</code> with
-the columns defined by <code>plm_template()</code>.</p>
+<p>The above will create a sheet named <code>authors</code> with the
+columns defined by <code>plm_template()</code>.</p>
 <p>Enter your information and share the sheet with your collaborators so
 they can add theirs too.</p>
 <p>Note that if it’s the first time you use googlesheets4, you’ll need
@@ -364,7 +364,7 @@ to grant the package permission to work with Google Sheets. You can read
 more about googlesheets4 authentication <a href="https://googlesheets4.tidyverse.org/reference/gs4_auth.html">here</a>.</p>
 <p>Once the sheet is online, use <code>read_sheet()</code> to read it in
 R.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="fu">gs4_find</span>(<span class="st">&quot;encyclopédie&quot;</span>))</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">read_sheet</span>(<span class="fu">gs4_find</span>(<span class="st">&quot;authors&quot;</span>))</span></code></pre></div>
 </div>
 <div id="set-up" class="section level2">
 <h2>Set up</h2>
@@ -385,7 +385,7 @@ Markdown or Quarto document as shown in the example below:</p>
 <span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>library(googlesheets4)</span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>library(plume)</span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>tbl_authors &lt;- gs4_find(&quot;sheet_name&quot;) |&gt; read_sheet()</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>tbl_authors &lt;- read_sheet(gs4_find(&quot;sheet_name&quot;))</span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a></span>
 <span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>aut &lt;- Plume$new(tbl_authors)</span>
 <span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>aut$set_corresponding_authors(1)</span>
@@ -422,11 +422,11 @@ script.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">library</span>(googlesheets4)</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">library</span>(plume)</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>tbl_authors <span class="ot">&lt;-</span> <span class="fu">gs4_find</span>(<span class="st">&quot;sheet_name&quot;</span>) <span class="sc">|&gt;</span> <span class="fu">read_sheet</span>()</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>tbl_authors <span class="ot">&lt;-</span> <span class="fu">read_sheet</span>(<span class="fu">gs4_find</span>(<span class="st">&quot;sheet_name&quot;</span>))</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(tbl_authors, <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span>)<span class="sc">$</span></span>
-<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>  <span class="fu">set_corresponding_authors</span>(<span class="dv">1</span>)<span class="sc">$</span></span>
-<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>  <span class="fu">to_yaml</span>()</span></code></pre></div>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeQuarto<span class="sc">$</span><span class="fu">new</span>(tbl_authors, <span class="at">file =</span> <span class="st">&quot;file.qmd&quot;</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">set_corresponding_authors</span>(<span class="dv">1</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>aut<span class="sc">$</span><span class="fu">to_yaml</span>()</span></code></pre></div>
 <p>Remember to run the script everytime the spreadsheet is updated to
 implement the changes in your document.</p>
 </div>

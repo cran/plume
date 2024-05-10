@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 library(plume)
 
@@ -16,18 +16,18 @@ author <- tibble::tibble(
   affiliation3 = "name=Academia Franekerensis country=The Netherlands city=Franeker"
 )
 
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 tmp_file <- withr::local_tempfile(
   lines = "---\ntitle: Cogito ergo sum\n---",
   fileext = ".qmd"
 )
 aut <- PlumeQuarto$new(author, tmp_file)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  aut <- PlumeQuarto$new(author, file = "file.qmd")
 #  aut$to_yaml()
 
-## ---- echo = FALSE, comment = ""----------------------------------------------
+## ----echo = FALSE, comment = ""-----------------------------------------------
 aut$to_yaml()
 cat(readr::read_file(tmp_file))
 

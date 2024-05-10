@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   warning = FALSE,
   collapse = TRUE,
@@ -15,7 +15,7 @@ encyclopedists
 ## -----------------------------------------------------------------------------
 Plume$new(encyclopedists)
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 list_keys <- function(x) {
   nms <- names(x)
   out <- vector("list", length(x))
@@ -63,19 +63,19 @@ make_table_vars <- function(category) {
   ))
 }
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 make_table_vars("primaries")
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 make_table_vars("secondaries")
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 make_table_vars("nestables")
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 make_table_vars("protected")
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 make_table_vars("internals")
 
 ## -----------------------------------------------------------------------------
@@ -90,7 +90,7 @@ Plume$new(
   )
 )
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 tibble::tibble(
   given_name = c("Denis", "Jean-Jacques", "François-Marie", "Jean"),
   family_name = c("Diderot", "Rousseau", "Arouet", "Le Rond d'Alembert"),
@@ -98,25 +98,25 @@ tibble::tibble(
   writing = 1,
 )
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  Plume$new(data, roles = c(
 #    supervision = "supervised the project",
 #    writing = "contributed to the writing"
 #  ))
 
-## ---- echo = FALSE------------------------------------------------------------
- status_methods <- tibble::tibble(
-   name = c(
-     "set_corresponding_authors()",
-     "set_main_contributors()",
-     "set_cofirst_authors()",
-     "set_deceased()"
-   ),
-   Plume = as.logical(c(1, 1, 0, 0)),
-   PlumeQuarto = as.logical(c(1, 0, 1, 1)),
- )
+## ----echo = FALSE-------------------------------------------------------------
+status_methods <- tibble::tibble(
+  name = c(
+    "set_corresponding_authors()",
+    "set_main_contributors()",
+    "set_cofirst_authors()",
+    "set_deceased()"
+  ),
+  Plume = as.logical(c(1, 1, 0, 0)),
+  PlumeQuarto = as.logical(c(1, 0, 1, 1)),
+)
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----echo = FALSE-------------------------------------------------------------
 build_table(status_methods)
 
 ## -----------------------------------------------------------------------------
@@ -129,35 +129,35 @@ aut
 aut$set_corresponding_authors(everyone())
 aut
 
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 tmp_file <- withr::local_tempfile(
   lines = "---\ntitle: Encyclopédie\n---\n\nQui scribit bis legit",
   fileext = ".qmd"
 )
 
-## ---- echo = FALSE, comment = ""----------------------------------------------
+## ----echo = FALSE, comment = ""-----------------------------------------------
 cat(read_file(tmp_file))
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  aut <- PlumeQuarto$new(
 #    dplyr::slice(encyclopedists, 1, 4),
 #    file = "file.qmd"
 #  )
 #  aut$to_yaml()
 
-## ---- echo = FALSE, comment = ""----------------------------------------------
+## ----echo = FALSE, comment = ""-----------------------------------------------
 aut <- PlumeQuarto$new(dplyr::slice(encyclopedists, 1, 4), tmp_file)
 aut$to_yaml()
 cat(read_file(tmp_file))
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  aut <- PlumeQuarto$new(
 #    dplyr::slice(encyclopedists, 2),
 #    file = "file.qmd"
 #  )
 #  aut$to_yaml()
 
-## ---- echo = FALSE, comment = ""----------------------------------------------
+## ----echo = FALSE, comment = ""-----------------------------------------------
 aut <- PlumeQuarto$new(dplyr::slice(encyclopedists, 2), tmp_file)
 aut$to_yaml()
 cat(read_file(tmp_file))
@@ -166,17 +166,17 @@ cat(read_file(tmp_file))
 aut <- Plume$new(encyclopedists)
 aut$set_corresponding_authors(everyone())
 
-aut$get_author_list(suffix = "ac") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ac")
 
-aut$get_author_list(suffix = "ca") |> enumerate(last = ",\n")
+aut$get_author_list(suffix = "ca")
 
 ## -----------------------------------------------------------------------------
 aut$set_corresponding_authors(1, 4)
 
-aut$get_author_list("^a,^cn") |> enumerate(last = ",\n")
+aut$get_author_list("^a,^cn")
 
 ## -----------------------------------------------------------------------------
-aut$get_author_list(suffix = NULL) |> enumerate()
+aut$get_author_list(suffix = NULL)
 
 ## -----------------------------------------------------------------------------
 aut$get_affiliations()
@@ -184,7 +184,7 @@ aut$get_affiliations()
 aut$get_notes(sep = ": ", superscript = FALSE)
 
 ## -----------------------------------------------------------------------------
-aut$get_orcids(compact = FALSE, icon = FALSE, sep = " ")
+aut$get_orcids(icon = FALSE, sep = " ")
 
 ## -----------------------------------------------------------------------------
 aut$get_contact_details()
@@ -222,15 +222,21 @@ aut$get_contributions()
 ## -----------------------------------------------------------------------------
 aut$get_contributions(alphabetical_order = TRUE)
 
-## ---- echo = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
+#  aut$set_main_contributors(4, 3, supervision = 1, .roles = aut$get_roles())
+
+## ----echo = FALSE-------------------------------------------------------------
 str(plume:::.symbols)
 
 ## -----------------------------------------------------------------------------
-aut <- Plume$new(encyclopedists, symbols = list(affiliation = letters, note = NULL))
+aut <- Plume$new(
+  encyclopedists,
+  symbols = list(affiliation = letters, note = NULL)
+)
 
-aut$get_author_list("^a,n^") |> enumerate(last = ",\n")
+aut$get_author_list("^a,n^")
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  Plume$new(
 #    encyclopedists,
 #    symbols = list(affiliation = sequential(letters))
