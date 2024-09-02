@@ -18,9 +18,9 @@ plume provides tools for handling and generating author-related
 information for scientific writing in R Markdown and Quarto. The package
 implements two R6 classes:
 
-- `PlumeQuarto`: class that allows you to push author metadata in the
-  YAML header of Quarto files. The generated YAML complies with Quarto’s
-  [author and affiliations
+- `PlumeQuarto`: class that allows you to push author metadata in YAML
+  files or the YAML header of Quarto files. The generated YAML complies
+  with Quarto’s [author and affiliations
   schemas](https://quarto.org/docs/journals/authors.html). This is the
   class to use if you work with journal templates.
 
@@ -74,8 +74,8 @@ Plume$new(encyclopedists)
 #> # ℹ 2 more variables: affiliation <list>, role <list>
 ```
 
-`PlumeQuarto` lets you push author metadata in the YAML header of any
-`.qmd` file using the `to_yaml()` method.
+`PlumeQuarto` lets you push author metadata in YAML files or the YAML
+header of any `.qmd` file using the `to_yaml()` method.
 
 Consider the following example:
 
@@ -108,8 +108,8 @@ aut$to_yaml()
         attributes:
           corresponding: true
         roles:
-          - supervision
-          - writing - original draft
+          - Supervision
+          - Writing - original draft
         affiliations:
           - ref: aff1
       - id: aut2
@@ -121,7 +121,7 @@ aut$to_yaml()
         attributes:
           corresponding: false
         roles:
-          - writing - original draft
+          - Writing - original draft
         affiliations:
           - ref: aff2
       - id: aut3
@@ -133,7 +133,7 @@ aut$to_yaml()
         attributes:
           corresponding: false
         roles:
-          - writing - original draft
+          - Writing - original draft
         affiliations:
           - ref: aff2
       - id: aut4
@@ -146,8 +146,8 @@ aut$to_yaml()
         attributes:
           corresponding: true
         roles:
-          - supervision
-          - writing - original draft
+          - Supervision
+          - Writing - original draft
         affiliations:
           - ref: aff1
           - ref: aff3

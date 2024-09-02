@@ -13,12 +13,12 @@
           email: zipzap@test.com
           phone: '+1234'
           orcid: 0000-0000-0000-0001
-          note: a, c
+          note: a. c
           attributes:
             corresponding: true
           roles:
-            - formal analysis
-            - writing - original draft
+            - Formal analysis
+            - Writing - original draft
           affiliations:
             - ref: aff1
             - ref: aff2
@@ -31,7 +31,7 @@
           attributes:
             corresponding: false
           roles:
-            - formal analysis
+            - Formal analysis
           affiliations:
             - ref: aff3
         - id: aut3
@@ -43,7 +43,7 @@
           attributes:
             corresponding: false
           roles:
-            - formal analysis
+            - Formal analysis
           affiliations:
             - ref: aff1
             - ref: aff4
@@ -80,7 +80,7 @@
           attributes:
             corresponding: true
           roles:
-            - formal analysis
+            - Formal analysis
           affiliations:
             - ref: aff1
             - ref: aff2
@@ -93,7 +93,7 @@
           attributes:
             corresponding: false
           roles:
-            - formal analysis
+            - Formal analysis
           affiliations:
             - ref: aff3
         - id: aut3
@@ -103,12 +103,12 @@
           email: zipzap@test.com
           phone: '+1234'
           orcid: 0000-0000-0000-0001
-          note: a, c
+          note: a. c
           attributes:
             corresponding: false
           roles:
-            - formal analysis
-            - writing - original draft
+            - Formal analysis
+            - Writing - original draft
           affiliations:
             - ref: aff2
             - ref: aff4
@@ -219,6 +219,37 @@
         Lorem ipsum
         Vivamus quis
       ---
+
+# to_yaml() can push data into YAML files
+
+    Code
+      read_test_file(tmp_file)
+    Output
+      title: foo
+      author:
+        - name:
+            given: Zip
+            family: Zap
+
+# to_yaml() properly handles authors with no roles (#81)
+
+    Code
+      read_test_file(tmp_file)
+    Output
+      title: foo
+      author:
+        - id: aut1
+          name:
+            given: A
+            family: A
+          roles:
+            - Formal analysis
+            - Writing - original draft
+        - id: aut2
+          name:
+            given: B
+            family: B
+          roles: {}
 
 # to_yaml() errors if no YAML headers is found
 

@@ -7,12 +7,15 @@
     number = "number",
     dropping_particle = "dropping_particle",
     acknowledgements = "acknowledgements"
+  ),
+  nestables = list(
+    degree = "degree"
   )
 ))
 
 #' @title PlumeQuarto class
-#' @description Class that pushes author metadata in the YAML header
-#'   of Quarto files.
+#' @description Class that pushes author metadata in YAML files or the YAML
+#'   header of Quarto files.
 #' @examples
 #' # Create a simple temporary file with a YAML header
 #' # containing a title
@@ -53,7 +56,7 @@ PlumeQuarto <- R6Class(
   public = list(
     #' @description Create a `PlumeQuarto` object.
     #' @param data A data frame containing author-related data.
-    #' @param file A `.qmd` file to insert author data into.
+    #' @param file A `.qmd`, `.yml` or `.yaml` file to insert author data into.
     #' @param names A vector of key-value pairs specifying custom names to use,
     #'   where keys are default names and values their respective replacements.
     #' @param roles A vector of key-value pairs defining roles where keys
@@ -76,18 +79,19 @@ PlumeQuarto <- R6Class(
       initials_given_name = FALSE,
       by = NULL
     ) {
-      check_file(file, extension = "qmd")
+      check_file(file, extensions = c("qmd", "yml", "yaml"))
       super$initialize(data, names, roles, credit_roles, initials_given_name, by = by)
       private$file <- file
       private$id <- private$pick("id")
     },
 
-    #' @description Push or update author information in a YAML header. The
-    #'   generated YAML complies with Quarto's `r link("quarto_schemas")`.
+    #' @description Push or update author information in a YAML file or YAML
+    #'   header. The generated YAML complies with Quarto's
+    #'   `r link("quarto_schemas")`.
     #' @details
-    #' If missing, `to_yaml()` pushes author information into a YAML header. If
-    #' already existing, the function replaces old `author` and `affiliations`
-    #' values with the ones provided in the input data.
+    #' If missing, `to_yaml()` inserts author information into the desired file.
+    #' Otherwise, the function replaces old `author` and `affiliations` values
+    #' with the ones provided in the input data.
     #' @return The input `file` invisibly.
     to_yaml = function() {
       yaml_push(private$get_template(), file = private$file)
@@ -97,45 +101,47 @@ PlumeQuarto <- R6Class(
   private = list(
     file = NULL,
     plume_names = .names_quarto,
-    meta_prefix = "meta-",
+    meta_key = "meta-",
     id = NULL,
 
     mold = function(...) {
-      super$mold(starts_with(private$meta_prefix), ...)
+      super$mold(starts_with(private$meta_key), ...)
     },
 
     get_template = function() {
-      list(
+      out <- list(
         author = private$author_tbl(),
         affiliations = private$affiliation_tbl()
       )
+      add_class(out, cls = file_ext(private$file))
     },
 
     author_tbl = function() {
       tibble(
         id = private$author_ids(),
-        number = private$get("number"),
+        number = private$pull("number"),
         name = tibble(
-          given = private$get("given_name"),
-          family = private$get("family_name"),
-          `dropping-particle` = private$get("dropping_particle")
+          given = private$pull("given_name"),
+          family = private$pull("family_name"),
+          `dropping-particle` = private$pull("dropping_particle")
         ),
-        url = private$get("url"),
-        email = private$get("email"),
-        phone = private$get("phone"),
-        fax = private$get("fax"),
+        url = private$pull("url"),
+        email = private$pull("email"),
+        phone = private$pull("phone"),
+        fax = private$pull("fax"),
         orcid = private$author_orcids(),
         note = private$author_notes(),
-        acknowledgements = private$get("acknowledgements"),
+        degrees = private$itemise("degree"),
+        acknowledgements = private$pull("acknowledgements"),
         attributes = private$author_attributes(),
-        roles = private$author_roles(),
+        roles = private$itemise("role"),
         metadata = private$author_metadata(),
         affiliations = private$author_affiliations()
       )
     },
 
     author_ids = function() {
-      ids <- private$get("id")
+      ids <- private$pull("id")
       if (length(ids) == 1L) {
         return()
       }
@@ -143,49 +149,43 @@ PlumeQuarto <- R6Class(
     },
 
     author_orcids = function() {
-      out <- private$get("orcid")
+      out <- private$pull("orcid")
       if (!is.null(out)) {
         check_orcid(out)
       }
       out
     },
 
-    author_roles = function() {
-      col <- private$pick("role")
-      if (!private$has_col(col)) {
-        return()
-      }
-      out <- unnest_drop(private$plume, cols = all_of(col))
-      out <- summarise(
-        out,
-        `_` = list(tolower(.data[[col]])),
-        .by = all_of(private$id)
-      )
-      out[["_"]]
+    itemise = function(var) {
+      private$pull_nestable(var, \(x) list(vec_drop_na(x)))
     },
 
     author_notes = function() {
-      col <- private$pick("note")
+      private$pull_nestable("note", \(x) bind(x, sep = ". ", arrange = FALSE))
+    },
+
+    pull_nestable = function(var, callback) {
+      col <- private$pick(var)
       if (!private$has_col(col)) {
         return()
       }
       if (!is_nested(private$plume, col)) {
-        return(private$get("note"))
+        return(private$pull(var))
       }
       out <- unnest(private$plume, cols = all_of(col))
       out <- summarise(out, `_` = if_not_na(
         .data[[col]],
-        bind(.data[[col]], sep = ", ", arrange = FALSE),
+        callback(.data[[col]]),
         all = TRUE
-      ), .by = all_of(private$id))
+      ), .by = private$id)
       out[["_"]]
     },
 
     author_attributes = function() {
       out <- tibble(
-        corresponding = private$get("corresponding"),
-        deceased = private$get("deceased"),
-        `equal-contributor` = private$get("equal_contributor")
+        corresponding = private$pull("corresponding"),
+        deceased = private$pull("deceased"),
+        `equal-contributor` = private$pull("equal_contributor")
       )
       if (is_empty(out)) {
         return()
@@ -207,19 +207,19 @@ PlumeQuarto <- R6Class(
       ))
       out <- summarise(out, `_` = list(
         tibble(ref = sort(!!sym(.col)))
-      ), .by = all_of(private$id))
+      ), .by = private$id)
       out[["_"]]
     },
 
     author_metadata = function() {
-      if (!private$has_col(begins_with(private$meta_prefix))) {
+      if (!private$has_col(begins_with(private$meta_key))) {
         return()
       }
-      select(private$plume, starts_with(private$meta_prefix))
+      select(private$plume, starts_with(private$meta_key))
     },
 
     affiliation_tbl = function() {
-      affiliations <- private$get("affiliation")
+      affiliations <- private$pull("affiliation")
       if (is.null(affiliations)) {
         return()
       }
@@ -241,16 +241,16 @@ PlumeQuarto <- R6Class(
   )
 )
 
-affiliation_keys <- c(
+.affiliation_keys <- c(
   "number", "name", "department", "address", "city", "region", "state",
-  "country", "postal-code", "url", "isni", "ringgold", "ror"
+  "country", "postal-code", "url", "isni", "ringgold", "ror", "group"
 )
 
 parse_affiliation <- function(x) {
   if (!has_affiliation_sep(x)) {
     return(set_names(x, "name"))
   }
-  keys <- collapse(affiliation_keys, sep = "|")
+  keys <- collapse(.affiliation_keys, sep = "|")
   keys_regex <- paste0("\\b(?i:", keys, ")")
   nms <- str_extract_all(x, sprintf("%s(?==)", keys_regex), simplify = TRUE)
   els <- str_split_1(x, sprintf("\\s*%s=\\s*", keys_regex))[-1]

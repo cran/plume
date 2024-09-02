@@ -37,8 +37,8 @@ test_that("get_author_list() returns author list", {
     affix_to_authors(.a, .n, .c)
   )
   expect_equal(
-    aut$get_author_list("can"),
-    affix_to_authors(.c, .a, .n)
+    aut$get_author_list("cna"),
+    affix_to_authors(.c, .n, .a)
   )
   expect_equal(
     aut$get_author_list("^ac^n"),
@@ -55,14 +55,14 @@ test_that("get_author_list() returns author list", {
     aut$get_author_list("^a,^c"),
     affix_to_authors("^", .a, .seps, "^", .c)
   )
+  expect_equal(
+    aut$get_author_list("c^,a^"),
+    affix_to_authors(.c, "^", .seps, .a, "^")
+  )
 
   expect_equal(
     aut$get_author_list("a,,c"),
     affix_to_authors(.a, .seps, .c)
-  )
-  expect_equal(
-    aut$get_author_list(",ac,"),
-    affix_to_authors(.a, .c)
   )
   expect_equal(
     aut$get_author_list("^^ac^^"),

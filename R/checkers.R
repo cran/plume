@@ -60,6 +60,11 @@ is_blank <- function(x) {
 
 is_not_na <- Negate(is.na)
 
+is_selector <- function(expr) {
+  nms <- c("everyone", "everyone_but")
+  is_call(expr, nms, ns = c("plume", ""))
+}
+
 are_credit_roles <- function(x) {
   all(x %in% credit_roles()) || all(x %in% credit_roles(FALSE))
 }
@@ -110,7 +115,7 @@ abort_check <- function(
   msg = NULL,
   bullets = NULL,
   ...,
-  msg_body = 1,
+  msg_body = 1L,
   param,
   call = caller_user()
 ) {
@@ -259,11 +264,11 @@ check_suffix_format <- function(x, param = caller_arg(x)) {
   }
   if (has_dup_keys) {
     what <- "unique keys"
-    msg_body <- 2
+    msg_body <- 2L
   } else {
     allowed <- wrap(allowed, "`")
     what <- paste("any of", enumerate(allowed, last = " or "))
-    msg_body <- 3
+    msg_body <- 3L
   }
   abort_check(what, msg_body = msg_body, param = param)
 }
@@ -288,15 +293,15 @@ file_ext <- function(x) {
   str_extract(x, "(?<=\\.)[^.]+$")
 }
 
-check_file <- function(x, extension, ..., param = caller_arg(x)) {
+check_file <- function(x, extensions, ..., param = caller_arg(x)) {
   check_string(x, allow_empty = FALSE, param = param)
   ext <- file_ext(x)
-  if (is_not_na(ext) && vec_in(ext, extension)) {
+  if (is_not_na(ext) && vec_in(ext, extensions)) {
     check_path(x, param = param)
     return(invisible())
   }
-  extension <- wrap(predot(extension), "`")
-  abort_check(paste("a", extension, "file"), ..., param = param)
+  extensions <- enumerate(wrap(predot(extensions), "`"), last = " or ")
+  abort_check(paste("a", extensions, "file"), ..., param = param)
 }
 
 is_glueish <- function(x) {
