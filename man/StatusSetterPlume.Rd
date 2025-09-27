@@ -18,11 +18,13 @@ Internal class extending \code{StatusSetter} for \code{Plume}.
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="data"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-data'><code>plume::PlumeHandler$data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-roles'><code>plume::PlumeHandler$roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="initialize"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-initialize'><code>plume::StatusSetter$initialize()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
 </ul>
@@ -35,18 +37,19 @@ Internal class extending \code{StatusSetter} for \code{Plume}.
 Force one or more contributors' names to appear first in the
 contribution list.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlume$set_main_contributors(..., .roles = NULL, .by)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlume$set_main_contributors(..., .roles = NULL, .by = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{One or more unquoted expressions separated by commas.
-Expressions matching values in the column defined by \code{by}/\code{.by}
+Expressions matching values in the column defined by \code{by} or \code{.by}
 determine main contributors. Expressions can be named after any role to
 set different main contributors to different roles at once, in which
 case the \code{.roles} parameter only applies roles that are not already set
-to unnamed expressions. Matching of values is case-insensitive.}
+to unnamed expressions. Matching of values is case-insensitive and dot-
+agnostic.}
 
 \item{\code{.roles}}{Roles to assign main contributors to. If \code{.roles} is a
 named vector, only the names will be used.}

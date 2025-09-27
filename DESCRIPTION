@@ -1,14 +1,14 @@
 Type: Package
 Package: plume
 Title: A Simple Author Handler for Scientific Writing
-Version: 0.2.5
+Version: 0.3.0
 Authors@R: 
     person("Arnaud", "Gallou", , "arangacas@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0002-1002-4247"))
 Description: Handles and formats author information in scientific writing
     in 'R Markdown' and 'Quarto'. 'plume' provides easy-to-use and
-    flexible tools for injecting author metadata in 'YAML' headers as well
-    as generating author and contribution lists (among others) as strings
+    flexible tools for inserting author data in 'YAML' as well as
+    generating author and contribution lists (among others) as strings
     from tabular data.
 License: GPL (>= 3)
 URL: https://arnaudgallou.github.io/plume/,
@@ -30,8 +30,9 @@ Language: en-GB
 LazyData: true
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2024-09-02 19:34:12 UTC; arnaudgallou
-Author: Arnaud Gallou [aut, cre, cph] (<https://orcid.org/0000-0002-1002-4247>)
+Packaged: 2025-09-27 10:11:31 UTC; arnaudgallou
+Author: Arnaud Gallou [aut, cre, cph] (ORCID:
+    <https://orcid.org/0000-0002-1002-4247>)
 Maintainer: Arnaud Gallou <arangacas@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-09-02 21:40:02 UTC
+Date/Publication: 2025-09-27 10:20:02 UTC

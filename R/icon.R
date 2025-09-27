@@ -1,21 +1,36 @@
-#' @title ORCID icon
-#' @description Helper function to control the size and colour of the ORCID
-#'   icon.
-#' @param size Size (in pixels) of the icon.
+#' @title Create an ORCID icon
+#' @description
+#' Create an ORCID icon for use with the [`Plume`] class. This is only supported
+#' in R Markdown.
+#' @param size Size of the icon (in pixels).
 #' @param bw Should the black and white version of the icon be used?
-#' @returns A plume icon.
+#' @returns A plume icon, i.e. an object with S3 class `plm_icon`.
 #' @examples
-#' aut <- Plume$new(encyclopedists, orcid_icon = orcid(bw = TRUE))
+#' aut <- Plume$new(encyclopedists, orcid_icon = icn_orcid(bw = TRUE))
+#' @export
+icn_orcid <- function(size = 16, bw = FALSE) {
+  check_numeric(size)
+  check_bool(bw)
+  new_icon("orcid", size = size, bw = bw)
+}
+
+#' @title ORCID icon
+#' @description
+#' `r lifecycle::badge("deprecated")`
+#'
+#' Please use [icn_orcid()] instead.
+#' @inheritParams icn_orcid
+#' @returns A plume icon.
+#' @keywords internal
 #' @export
 orcid <- function(size = 16, bw = FALSE) {
-  check_num(size, allow_null = FALSE, call = current_env())
-  check_bool(bw, call = current_env())
-  new_icon("orcid", size = size, bw = bw)
+  lifecycle::deprecate_warn("0.2.6", "orcid()", "icn_orcid()")
+  icn_orcid(size, bw)
 }
 
 #' @export
 print.plm_icon <- function(x, ...) {
-  cat(sprintf("<%s>", x))
+  cat(sprintf("<%s icon>%s", x, eol()))
 }
 
 new_icon <- function(x, ..., size, bw) {
@@ -37,11 +52,11 @@ md_image <- function(image, size, style, spacing) {
 }
 
 as_svg <- function(x) {
-  structure(x, class = "svg")
+  add_class(x, "svg", inherit = FALSE)
 }
 
 as_pdf <- function(x) {
-  structure(x, class = "pdf")
+  add_class(x, "pdf", inherit = FALSE)
 }
 
 icn_format <- function(x) {
@@ -79,14 +94,13 @@ icn_buffer.svg <- function(x, margin) {
 
 icn_get_attrs <- function(x, size, bw, ...) {
   x <- icn_format(x)
-  c(
-    list(size = round(size), filename = icn_filename(x, bw), ...),
-    icn_buffer(x, margin = round(size / 4L))
-  )
+  attrs <- list(size = round(size), filename = icn_filename(x, bw), ...)
+  buffer <- icn_buffer(x, margin = round(size / 4L))
+  c(attrs, buffer)
 }
 
 icn_path <- function(file) {
-  system.file(paste0("icons/", file), package = "plume")
+  system.file(file.path("icons", file), package = "plume")
 }
 
 icn_create <- function(attrs) {

@@ -13,8 +13,7 @@ sequential(x)
 A character vector with parent S3 class \code{sequential}.
 }
 \description{
-Modifier function used to generate logical sequences of
-characters.
+Modifier function used to generate logical sequences of characters.
 }
 \examples{
 aut <- Plume$new(
@@ -23,7 +22,7 @@ aut <- Plume$new(
     family_name = "Y",
     affiliation = 1:60
   ),
-  symbols = list(affiliation = sequential(letters))
+  symbols = plm_symbols(affiliation = sequential(letters))
 )
 
 aut$get_affiliations(sep = ": ", superscript = FALSE)

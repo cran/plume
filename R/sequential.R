@@ -1,6 +1,6 @@
 #' @title Control the sequencing behaviour of character vectors
-#' @description Modifier function used to generate logical sequences of
-#'   characters.
+#' @description
+#' Modifier function used to generate logical sequences of characters.
 #' @param x A character vector.
 #' @returns A character vector with parent S3 class `sequential`.
 #' @examples
@@ -10,14 +10,14 @@
 #'     family_name = "Y",
 #'     affiliation = 1:60
 #'   ),
-#'   symbols = list(affiliation = sequential(letters))
+#'   symbols = plm_symbols(affiliation = sequential(letters))
 #' )
 #'
 #' aut$get_affiliations(sep = ": ", superscript = FALSE)
 #' @export
 sequential <- function(x) {
-  check_character(x, allow_duplicates = FALSE, allow_null = FALSE)
-  structure(x, class = c("sequential", "character"))
+  check_character(x, allow("unnamed"))
+  add_class(x, "sequential")
 }
 
 is_sequential <- function(x) {

@@ -2,11 +2,21 @@
 % Please edit documentation in R/plume.R
 \name{Plume}
 \alias{Plume}
-\title{Plume class}
+\alias{new_plume}
+\title{Generate author information within a document}
 \description{
-Class that generates author lists and other author-related
-information as character strings.
+\code{Plume} provides several methods to generate author information directly
+within an R Markdown or Quarto document. This is a convenient solution when
+you don't need preformatted reports.
+
+In some cases, \code{Plume} gives you greater control over the formatting of
+author information, as it supports features not available in \code{\link{PlumeQuarto}}.
 }
+\section{Notes}{
+
+\code{new_plume()} is an alias for \code{Plume$new()}.
+}
+
 \examples{
 # Create a Plume instance
 aut <- Plume$new(encyclopedists)
@@ -15,7 +25,7 @@ aut <- Plume$new(encyclopedists)
 # authors' id by default
 aut$set_corresponding_authors(1, 4)
 
-# Getting authors suffixed by affiliation ids
+# Listing authors, followed by affiliation ids
 # and the corresponding author mark:
 aut$get_author_list("^a,c^")
 
@@ -32,7 +42,7 @@ aut$get_contributions()
 # E.g. to use letters as affiliation ids:
 aut <- Plume$new(
   encyclopedists,
-  symbols = list(affiliation = letters)
+  symbols = plm_symbols(affiliation = letters)
 )
 
 aut$get_author_list("^a^")
@@ -41,10 +51,13 @@ aut$get_affiliations()
 
 # It is also possible to output contributions in the
 # active voice
-aut <- Plume$new(encyclopedists, roles = c(
-  supervision = "supervised the project",
-  writing = "contributed to the Encyclopédie"
-))
+aut <- Plume$new(
+  encyclopedists,
+  roles = c(
+    supervision = "supervised the project",
+    writing = "contributed to the Encyclopédie"
+  )
+)
 aut$get_contributions(roles_first = FALSE, divider = " ")
 }
 \section{Super classes}{
@@ -64,11 +77,13 @@ aut$get_contributions(roles_first = FALSE, divider = " ")
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="data"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-data'><code>plume::PlumeHandler$data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-roles'><code>plume::PlumeHandler$roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlume" data-id="set_main_contributors"><a href='../../plume/html/StatusSetterPlume.html#method-StatusSetterPlume-set_main_contributors'><code>plume::StatusSetterPlume$set_main_contributors()</code></a></span></li>
 </ul>
@@ -83,13 +98,15 @@ Create a \code{Plume} object.
 \if{html}{\out{<div class="r">}}\preformatted{Plume$new(
   data,
   names = NULL,
-  symbols = NULL,
   roles = credit_roles(),
+  symbols = plm_symbols(),
   credit_roles = FALSE,
   initials_given_name = FALSE,
+  dotted_initials = TRUE,
   family_name_first = FALSE,
+  distinct_initials = FALSE,
   interword_spacing = TRUE,
-  orcid_icon = orcid(),
+  orcid_icon = icn_orcid(),
   by = NULL
 )}\if{html}{\out{</div>}}
 }
@@ -97,19 +114,17 @@ Create a \code{Plume} object.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{A data frame containing author-related data.}
+\item{\code{data}}{A data frame containing author data.}
 
 \item{\code{names}}{A vector of key-value pairs specifying custom names to use,
 where keys are default names and values their respective replacements.}
 
-\item{\code{symbols}}{A list of key-value pairs defining the symbols to use to
-link authors and their metadata. Valid keys are \code{"affiliation"},
-\code{"corresponding"} and \code{"note"}. By default, uses digits for
-affiliations, \code{"*"} for corresponding authors and \code{"†"}, \code{"‡"}, \code{"§"},
-\code{"¶"}, \code{"#"}, \code{"**"} for notes. Set a key to \code{NULL} to use numerals.}
-
 \item{\code{roles}}{A vector of key-value pairs defining roles where keys
 identify role columns and values describe the actual roles to use.}
+
+\item{\code{symbols}}{Symbols, as defined by \code{\link[=plm_symbols]{plm_symbols()}}, used to link
+authors to their metadata. Special Markdown characters are
+automatically escaped internally.}
 
 \item{\code{credit_roles}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
 
@@ -118,13 +133,21 @@ It is now recommended to use \code{roles = credit_roles()} to use the
 
 \item{\code{initials_given_name}}{Should the initials of given names be used?}
 
+\item{\code{dotted_initials}}{Should initials be dot-separated?}
+
 \item{\code{family_name_first}}{Should literal names show family names first?}
+
+\item{\code{distinct_initials}}{If \code{TRUE}, will expand identical initials with
+additional letters from the last word of their respective family name
+until initials are unique. Initials of authors sharing the exact same
+name will remain in the short form.}
 
 \item{\code{interword_spacing}}{Should literal names use spacing? This parameter
 is only useful for people writing in languages that don't separate
 words with a space such as Chinese or Japanese.}
 
-\item{\code{orcid_icon}}{The ORCID icon, as defined by \code{\link[=orcid]{orcid()}}, to be used.}
+\item{\code{orcid_icon}}{The ORCID icon, as defined by \code{\link[=icn_orcid]{icn_orcid()}}, to be
+used. Only supported in R Markdown.}
 
 \item{\code{by}}{A character string defining the default variable used to assign
 specific metadata to authors in all \verb{set_*()} methods. By default, uses
@@ -140,7 +163,7 @@ A \code{Plume} object.
 \if{html}{\out{<a id="method-Plume-get_author_list"></a>}}
 \if{latex}{\out{\hypertarget{method-Plume-get_author_list}{}}}
 \subsection{Method \code{get_author_list()}}{
-Get author list.
+Get the list of authors.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Plume$get_author_list(suffix = NULL, format = deprecated())}\if{html}{\out{</div>}}
 }
@@ -164,14 +187,15 @@ using the following keys:
 \item \code{a} for affiliations
 \item \code{c} for corresponding authors
 \item \code{n} for notes
-\item \code{o} for ORCIDs
+\item \code{o} for ORCID icons (only supported in R Markdown)
 }
 
-The order of the keys determines the order of symbol types. E.g. \code{"ac"}
-shows affiliation ids first and corresponding author mark second, when
-\code{"ca"} shows corresponding author mark first and affiliation ids second.
-Use \code{","} to separate and \code{"^"} to superscript symbols.
-Use \code{NULL} or an empty string to list author names without suffixes.
+The order of the keys determines the order of symbol types. For example,
+\code{"ac"} shows affiliation ids first and corresponding author mark second,
+when \code{"ca"} shows corresponding author mark first and affiliation ids
+second. Use \code{","} to separate and \code{"^"} to superscript symbols.
+
+Set to \code{NULL} or \code{""} to list authors without suffixes.
 }
 
 \subsection{Returns}{
@@ -236,7 +260,8 @@ Get authors' ORCID.
 \describe{
 \item{\code{compact}}{Should links only display the 16-digit identifier?}
 
-\item{\code{icon}}{Should the ORCID icon be shown?}
+\item{\code{icon}}{Should the ORCID icon be shown? This is only supported in R
+Markdown.}
 
 \item{\code{sep}}{Separator used to separate authors and their respective ORCID.}
 }
@@ -253,19 +278,20 @@ A character vector.
 Get the contact details of corresponding authors.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{Plume$get_contact_details(
-  format = "{details} ({name})",
+  template = "{details} ({name})",
   email = TRUE,
   phone = FALSE,
   fax = FALSE,
   url = FALSE,
-  sep = ", "
+  sep = ", ",
+  format = deprecated()
 )}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{format}}{A \code{\link[glue:glue]{glue}} specification that uses the
+\item{\code{template}}{A \link[glue:glue]{glue} specification that uses the
 variables \code{name} and/or \code{details}.}
 
 \item{\code{email, phone, fax, url}}{Arguments equal to \code{TRUE} are evaluated and
@@ -273,6 +299,10 @@ passed to the variable \code{details}. By default, only \code{email} is set to
 \code{TRUE}.}
 
 \item{\code{sep}}{Separator used to separate \code{details} items.}
+
+\item{\code{format}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Please use the parameter \code{template} instead.}
 }
 \if{html}{\out{</div>}}
 }
@@ -290,11 +320,11 @@ Get authors' contributions.
   roles_first = TRUE,
   by_author = FALSE,
   alphabetical_order = FALSE,
-  dotted_initials = TRUE,
   literal_names = FALSE,
   divider = ": ",
   sep = ", ",
-  sep_last = " and "
+  sep_last = " and ",
+  dotted_initials = deprecated()
 )}\if{html}{\out{</div>}}
 }
 
@@ -309,8 +339,6 @@ Get authors' contributions.
 \item{\code{alphabetical_order}}{Should authors be listed in alphabetical order?
 By default, lists authors in the order they are defined in the data.}
 
-\item{\code{dotted_initials}}{Should initials be dot-separated?}
-
 \item{\code{literal_names}}{Should literal names be used?}
 
 \item{\code{divider}}{Separator used to separate roles from authors.}
@@ -319,6 +347,10 @@ By default, lists authors in the order they are defined in the data.}
 
 \item{\code{sep_last}}{Separator used to separate the last two roles or authors
 if more than one item is associated to a role or author.}
+
+\item{\code{dotted_initials}}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Please use the \code{dotted_initials} parameter of \code{Plume$new()} instead.}
 }
 \if{html}{\out{</div>}}
 }

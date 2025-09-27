@@ -343,12 +343,13 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <p>If you work in a language other than English, you can extend plume
 classes with default names in your desired language. plume provides
 <code>set_default_names()</code> to help you set new default names.</p>
-<p>E.g. to extend <code>Plume</code> with default names in French:</p>
+<p>For example, to extend <code>Plume</code> with default names in
+French:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>PlumeFr <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(</span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="at">classname =</span> <span class="st">&quot;PlumeFr&quot;</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="at">inherit =</span> Plume,</span>
 <span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>  <span class="at">private =</span> <span class="fu">list</span>(</span>
-<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="at">plume_names =</span> <span class="fu">set_default_names</span>(</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">set_default_names</span>(</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>      <span class="at">initials =</span> <span class="st">&quot;initiales&quot;</span>,</span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>      <span class="at">literal_name =</span> <span class="st">&quot;nom_complet&quot;</span>,</span>
 <span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a>      <span class="at">corresponding =</span> <span class="st">&quot;correspondant&quot;</span>,</span>
@@ -361,34 +362,53 @@ classes with default names in your desired language. plume provides
 <span id="cb1-15"><a href="#cb1-15" tabindex="-1"></a>)</span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>PlumeFr<span class="sc">$</span><span class="fu">new</span>(encyclopedists_fr)</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a><span class="co">#&gt; # A tibble: 4 × 11</span></span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;      id prénom  nom   nom_complet initiales courriel téléphone orcid role  note </span></span>
-<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;</span></span>
-<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis   Dide… Denis Dide… DD        diderot… +1234     0000… Supe… né e…</span></span>
-<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-J… Rous… Jean-Jacqu… J-JR      roussea… &lt;NA&gt;      0000… &lt;NA&gt;  &lt;NA&gt; </span></span>
-<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 3     3 Franço… Arou… François-M… F-MA      arouet@… &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt;  dit …</span></span>
-<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean    Le R… Jean Le Ro… JLRd&#39;A    alember… &lt;NA&gt;      0000… Supe… né e…</span></span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a><span class="co">#&gt;      id prénom  nom   nom_complet initiales orcid courriel téléphone role  note </span></span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a><span class="co">#&gt;   &lt;int&gt; &lt;chr&gt;   &lt;chr&gt; &lt;chr&gt;       &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a><span class="co">#&gt; 1     1 Denis   Dide… Denis Dide… D.D.      0000… diderot… +1234     Supe… né e…</span></span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a><span class="co">#&gt; 2     2 Jean-J… Rous… Jean-Jacqu… J.-J.R.   0000… roussea… &lt;NA&gt;      &lt;NA&gt;  &lt;NA&gt; </span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a><span class="co">#&gt; 3     3 Franço… Arou… François-M… F.-M.A.   &lt;NA&gt;  arouet@… &lt;NA&gt;      &lt;NA&gt;  dit …</span></span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a><span class="co">#&gt; 4     4 Jean    Le R… Jean Le Ro… J.L.R.d&#39;… 0000… alember… &lt;NA&gt;      Supe… né e…</span></span>
 <span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: affiliation &lt;list&gt;</span></span></code></pre></div>
-<p>You can also overwrite the default arguments of some methods to match
-your language. I recommend doing it in the <code>public</code> argument
-of the class definition. For the purpose of this example, I’ll use the
-<code>set()</code> method instead. For example, to change
-<code>divider</code> and <code>sep_last</code> to <code>:</code> and
-<code>et</code> in <code>get_contributions()</code>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>PlumeFr<span class="sc">$</span><span class="fu">set</span>(<span class="st">&quot;public&quot;</span>, <span class="st">&quot;get_contributions&quot;</span>, <span class="cf">function</span>(</span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">roles_first =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">by_author =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">alphabetical_order =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">dotted_initials =</span> <span class="cn">TRUE</span>,</span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">literal_names =</span> <span class="cn">FALSE</span>,</span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">divider =</span> <span class="st">&quot; : &quot;</span>,</span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">sep =</span> <span class="st">&quot;, &quot;</span>,</span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  <span class="at">sep_last =</span> <span class="st">&quot; et &quot;</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>) {</span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>  super<span class="sc">$</span><span class="fu">get_contributions</span>(</span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    roles_first, by_author, alphabetical_order, dotted_initials,</span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    literal_names, divider, sep, sep_last</span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  )</span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>})</span></code></pre></div>
+<p>You can also override the default arguments of some methods to match
+your language. Expanding on the example above, we can add a new
+<code>get_contributions()</code> method to replace the default arguments
+of the <code>divider</code> and <code>sep_last</code> parameters:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>PlumeFr <span class="ot">&lt;-</span> R6<span class="sc">::</span><span class="fu">R6Class</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">classname =</span> <span class="st">&quot;PlumeFr&quot;</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">inherit =</span> Plume,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">private =</span> <span class="fu">list</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">names =</span> <span class="fu">set_default_names</span>(</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>      <span class="at">initials =</span> <span class="st">&quot;initiales&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>      <span class="at">literal_name =</span> <span class="st">&quot;nom_complet&quot;</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>      <span class="at">corresponding =</span> <span class="st">&quot;correspondant&quot;</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>      <span class="at">given_name =</span> <span class="st">&quot;prénom&quot;</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>      <span class="at">family_name =</span> <span class="st">&quot;nom&quot;</span>,</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>      <span class="at">email =</span> <span class="st">&quot;courriel&quot;</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>      <span class="at">phone =</span> <span class="st">&quot;téléphone&quot;</span></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    )</span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  ),</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">public =</span> <span class="fu">list</span>(</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="at">get_contributions =</span> <span class="cf">function</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>      <span class="at">roles_first =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>      <span class="at">by_author =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>      <span class="at">alphabetical_order =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>      <span class="at">literal_names =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>      <span class="at">divider =</span> <span class="st">&quot; : &quot;</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>      <span class="at">sep =</span> <span class="st">&quot;, &quot;</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>      <span class="at">sep_last =</span> <span class="st">&quot; et &quot;</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>    ) {</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>      super<span class="sc">$</span><span class="fu">get_contributions</span>(</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>        <span class="at">roles_first =</span> roles_first,</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>        <span class="at">by_author =</span> by_author,</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>        <span class="at">alphabetical_order =</span> alphabetical_order,</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>        <span class="at">literal_names =</span> literal_names,</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>        <span class="at">divider =</span> divider,</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>        <span class="at">sep =</span> sep,</span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>        <span class="at">sep_last =</span> sep_last</span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>      )</span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>    }</span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>  )</span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>)</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>aut <span class="ot">&lt;-</span> PlumeFr<span class="sc">$</span><span class="fu">new</span>(</span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  encyclopedists_fr,</span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="at">roles =</span> <span class="fu">c</span>(<span class="at">supervision =</span> <span class="st">&quot;Supervision&quot;</span>, rédaction <span class="ot">=</span> <span class="st">&quot;Rédaction&quot;</span>)</span>

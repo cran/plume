@@ -1,4 +1,5 @@
-.names_quarto <- list_modify(.names, public = list(
+.names_quarto <- list_modify(
+  .names,
   internals = list(
     deceased = "deceased",
     equal_contributor = "equal_contributor"
@@ -11,34 +12,38 @@
   nestables = list(
     degree = "degree"
   )
-))
+)
 
-#' @title PlumeQuarto class
-#' @description Class that pushes author metadata in YAML files or the YAML
-#'   header of Quarto files.
+#' @title Add or update author data in YAML for Quarto
+#' @description
+#' `PlumeQuarto` allows you to add or update author data in YAML files or the
+#' YAML header of Quarto documents. The generated YAML complies with Quarto's
+#' `r link("quarto_schemas")`. Use this class when working with journal
+#' templates.
+#' @section Notes:
+#' `new_plume_quarto()` is an alias for `PlumeQuarto$new()`.
 #' @examples
-#' # Create a simple temporary file with a YAML header
-#' # containing a title
-#' tmp_file <- tempfile(fileext = ".qmd")
-#' readr::write_lines("---\ntitle: Encyclopédie\n---", tmp_file)
+#' # Create a simple temporary YAML file containing a title
+#' tmp_file <- tempfile(fileext = ".yml")
+#' readr::write_lines("title: Encyclopédie", tmp_file)
 #'
 #' # View the temporary file
 #' cat(readr::read_file(tmp_file))
 #'
 #' # Create a PlumeQuarto instance using the temporary file
-#' # you've just created
+#' # we've just created
 #' aut <- PlumeQuarto$new(
 #'   encyclopedists,
 #'   file = tmp_file
 #' )
 #'
-#' # And push author data to the YAML header
+#' # And add author data to the YAML file
 #' aut$to_yaml()
 #'
 #' cat(readr::read_file(tmp_file))
 #'
-#' # Pushing again with new data updates the YAML
-#' # header accordingly
+#' # Running the method again with new data updates the YAML
+#' # accordingly
 #' aut <- PlumeQuarto$new(
 #'   dplyr::slice(encyclopedists, 2),
 #'   file = tmp_file
@@ -47,7 +52,7 @@
 #'
 #' cat(readr::read_file(tmp_file))
 #'
-#' # Clean up the temporary file
+#' # Clean up
 #' unlink(tmp_file)
 #' @export
 PlumeQuarto <- R6Class(
@@ -55,7 +60,7 @@ PlumeQuarto <- R6Class(
   inherit = StatusSetterPlumeQuarto,
   public = list(
     #' @description Create a `PlumeQuarto` object.
-    #' @param data A data frame containing author-related data.
+    #' @param data A data frame containing author data.
     #' @param file A `.qmd`, `.yml` or `.yaml` file to insert author data into.
     #' @param names A vector of key-value pairs specifying custom names to use,
     #'   where keys are default names and values their respective replacements.
@@ -66,6 +71,7 @@ PlumeQuarto <- R6Class(
     #'   It is now recommended to use `roles = credit_roles()` to use the
     #'   `r link("crt")`.
     #' @param initials_given_name Should the initials of given names be used?
+    #' @param dotted_initials Should initials be dot-separated?
     #' @param by A character string defining the default variable used to assign
     #'   specific metadata to authors in all `set_*()` methods. By default, uses
     #'   authors' id.
@@ -77,32 +83,33 @@ PlumeQuarto <- R6Class(
       roles = credit_roles(),
       credit_roles = FALSE,
       initials_given_name = FALSE,
+      dotted_initials = TRUE,
       by = NULL
     ) {
-      check_file(file, extensions = c("qmd", "yml", "yaml"))
-      super$initialize(data, names, roles, credit_roles, initials_given_name, by = by)
+      check_file(file, exts = c("qmd", "yml", "yaml"))
+      super$initialize(
+        data,
+        names,
+        roles,
+        credit_roles,
+        initials_given_name,
+        dotted_initials,
+        by = by
+      )
       private$file <- file
-      private$id <- private$pick("id")
     },
 
-    #' @description Push or update author information in a YAML file or YAML
-    #'   header. The generated YAML complies with Quarto's
-    #'   `r link("quarto_schemas")`.
-    #' @details
-    #' If missing, `to_yaml()` inserts author information into the desired file.
-    #' Otherwise, the function replaces old `author` and `affiliations` values
-    #' with the ones provided in the input data.
-    #' @return The input `file` invisibly.
+    #' @description Add or update author data in the input `file`.
+    #' @return The input `file`, invisibly.
     to_yaml = function() {
-      yaml_push(private$get_template(), file = private$file)
+      yaml_update(private$get_template(), file = private$file)
     }
   ),
 
   private = list(
     file = NULL,
-    plume_names = .names_quarto,
+    names = .names_quarto,
     meta_key = "meta-",
-    id = NULL,
 
     mold = function(...) {
       super$mold(starts_with(private$meta_key), ...)
@@ -177,8 +184,8 @@ PlumeQuarto <- R6Class(
         .data[[col]],
         callback(.data[[col]]),
         all = TRUE
-      ), .by = private$id)
-      out[["_"]]
+      ), .by = private$pick("id"))
+      out$"_"
     },
 
     author_attributes = function() {
@@ -207,8 +214,8 @@ PlumeQuarto <- R6Class(
       ))
       out <- summarise(out, `_` = list(
         tibble(ref = sort(!!sym(.col)))
-      ), .by = private$id)
-      out[["_"]]
+      ), .by = private$pick("id"))
+      out$"_"
     },
 
     author_metadata = function() {
@@ -229,7 +236,7 @@ PlumeQuarto <- R6Class(
         return(tibble(id = ids, name = affiliations))
       }
       out <- map(affiliations, \(affiliation) {
-        as_tibble_row(parse_affiliation(affiliation))
+        tibble::as_tibble_row(parse_affiliation(affiliation))
       })
       out <- list_rbind(out, names_to = "id")
       out <- mutate(out, id = make_affiliation_id(id))
@@ -241,9 +248,26 @@ PlumeQuarto <- R6Class(
   )
 )
 
+#' @rdname PlumeQuarto
+#' @usage NULL
+#' @export
+new_plume_quarto <- PlumeQuarto$new
+
 .affiliation_keys <- c(
-  "number", "name", "department", "address", "city", "region", "state",
-  "country", "postal-code", "url", "isni", "ringgold", "ror", "group"
+  "number",
+  "name",
+  "department",
+  "address",
+  "city",
+  "region",
+  "state",
+  "country",
+  "postal-code",
+  "url",
+  "isni",
+  "ringgold",
+  "ror",
+  "group"
 )
 
 parse_affiliation <- function(x) {

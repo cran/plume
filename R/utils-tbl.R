@@ -4,7 +4,7 @@ col_count <- function(data, name) {
 
 itemise_rows <- function(data, cols) {
   out <- map(data[cols], as.character)
-  list_transpose(out)
+  purrr::list_transpose(out)
 }
 
 collapse_cols <- function(data, cols, sep) {
@@ -15,13 +15,7 @@ collapse_cols <- function(data, cols, sep) {
   map_vec(rows, \(row) collapse(vec_drop_na(row), sep))
 }
 
-dissolve <- function(data, dict, callback, env = caller_env()) {
-  iwalk(dict, \(value, key) {
-    assign(key, callback(data, value), envir = env)
-  })
-}
-
-unnest_drop <- function(data, cols) {
+unnest_drop_na <- function(data, cols) {
   data <- unnest(data, cols = all_of(cols))
   drop_na(data, all_of(cols))
 }
@@ -41,11 +35,11 @@ add_suffixes <- function(data, cols, symbols) {
       if (is.null(value)) {
         return()
       }
-      if (key == "orcid") {
-        data <<- add_orcid_icons(data, value)
-      } else {
-        data <<- add_symbols(data, .cols[[key]], value)
-      }
+      data <<- switch(
+        key,
+        orcid = add_orcid_icons(data, key, value),
+        add_symbols(data, .cols[[key]], value)
+      )
     })
   )
   data
@@ -61,9 +55,12 @@ add_symbols <- function(data, col, symbols) {
   data
 }
 
-add_orcid_icons <- function(data, orcid) {
-  col <- unstructure(orcid)
-  data[predot(col)] <- make_orcid_icon(data[[col]], attributes(orcid))
+add_orcid_icons <- function(data, col, orcid) {
+  data[predot(col)] <- if (is_using_quarto()) {
+    ""
+  } else {
+    make_orcid_icon(data[[col]], attributes(orcid))
+  }
   data
 }
 
@@ -78,7 +75,7 @@ add_contribution_ranks <- function(data, values, roles, by, cols) {
   data <- col_init(data, cols$contributor_rank)
   iwalk(values, \(value, key) {
     data[cols$contributor_rank] <<- if_else(
-      is_not_na(roles[key]) & data[[cols$role]] == roles[key],
+      !is.na(roles[key]) & data[[cols$role]] == roles[key],
       rank(data[[by]], value),
       data[[cols$contributor_rank]]
     )
@@ -109,5 +106,13 @@ rename_roles <- function(data, roles, key) {
   if (length(nms) > 1L) {
     key <- paste(key, seq_along(nms), sep = "_")
   }
-  rename(data, any_of(set_names(nms, key)))
+  dplyr::rename(data, any_of(set_names(nms, key)))
+}
+
+add_long_initials <- function(data, col, names) {
+  duplicated <- vctrs::vec_duplicate_detect(data)
+  old <- data[[col]]
+  new <- lengthen_initials(old[duplicated], names[duplicated])
+  data[col] <- replace(old, duplicated, new)
+  data
 }

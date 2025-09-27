@@ -2,34 +2,41 @@
 % Please edit documentation in R/plume-quarto.R
 \name{PlumeQuarto}
 \alias{PlumeQuarto}
-\title{PlumeQuarto class}
+\alias{new_plume_quarto}
+\title{Add or update author data in YAML for Quarto}
 \description{
-Class that pushes author metadata in YAML files or the YAML
-header of Quarto files.
+\code{PlumeQuarto} allows you to add or update author data in YAML files or the
+YAML header of Quarto documents. The generated YAML complies with Quarto's
+\href{https://quarto.org/docs/journals/authors.html}{author and affiliations schemas}. Use this class when working with journal
+templates.
 }
+\section{Notes}{
+
+\code{new_plume_quarto()} is an alias for \code{PlumeQuarto$new()}.
+}
+
 \examples{
-# Create a simple temporary file with a YAML header
-# containing a title
-tmp_file <- tempfile(fileext = ".qmd")
-readr::write_lines("---\ntitle: Encyclopédie\n---", tmp_file)
+# Create a simple temporary YAML file containing a title
+tmp_file <- tempfile(fileext = ".yml")
+readr::write_lines("title: Encyclopédie", tmp_file)
 
 # View the temporary file
 cat(readr::read_file(tmp_file))
 
 # Create a PlumeQuarto instance using the temporary file
-# you've just created
+# we've just created
 aut <- PlumeQuarto$new(
   encyclopedists,
   file = tmp_file
 )
 
-# And push author data to the YAML header
+# And add author data to the YAML file
 aut$to_yaml()
 
 cat(readr::read_file(tmp_file))
 
-# Pushing again with new data updates the YAML
-# header accordingly
+# Running the method again with new data updates the YAML
+# accordingly
 aut <- PlumeQuarto$new(
   dplyr::slice(encyclopedists, 2),
   file = tmp_file
@@ -38,7 +45,7 @@ aut$to_yaml()
 
 cat(readr::read_file(tmp_file))
 
-# Clean up the temporary file
+# Clean up
 unlink(tmp_file)
 }
 \section{Super classes}{
@@ -55,9 +62,11 @@ unlink(tmp_file)
 \if{html}{\out{
 <details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="data"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-data'><code>plume::PlumeHandler$data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-roles'><code>plume::PlumeHandler$roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlumeQuarto" data-id="set_cofirst_authors"><a href='../../plume/html/StatusSetterPlumeQuarto.html#method-StatusSetterPlumeQuarto-set_cofirst_authors'><code>plume::StatusSetterPlumeQuarto$set_cofirst_authors()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetterPlumeQuarto" data-id="set_deceased"><a href='../../plume/html/StatusSetterPlumeQuarto.html#method-StatusSetterPlumeQuarto-set_deceased'><code>plume::StatusSetterPlumeQuarto$set_deceased()</code></a></span></li>
@@ -78,6 +87,7 @@ Create a \code{PlumeQuarto} object.
   roles = credit_roles(),
   credit_roles = FALSE,
   initials_given_name = FALSE,
+  dotted_initials = TRUE,
   by = NULL
 )}\if{html}{\out{</div>}}
 }
@@ -85,7 +95,7 @@ Create a \code{PlumeQuarto} object.
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
-\item{\code{data}}{A data frame containing author-related data.}
+\item{\code{data}}{A data frame containing author data.}
 
 \item{\code{file}}{A \code{.qmd}, \code{.yml} or \code{.yaml} file to insert author data into.}
 
@@ -102,6 +112,8 @@ It is now recommended to use \code{roles = credit_roles()} to use the
 
 \item{\code{initials_given_name}}{Should the initials of given names be used?}
 
+\item{\code{dotted_initials}}{Should initials be dot-separated?}
+
 \item{\code{by}}{A character string defining the default variable used to assign
 specific metadata to authors in all \verb{set_*()} methods. By default, uses
 authors' id.}
@@ -116,21 +128,13 @@ A \code{PlumeQuarto} object.
 \if{html}{\out{<a id="method-PlumeQuarto-to_yaml"></a>}}
 \if{latex}{\out{\hypertarget{method-PlumeQuarto-to_yaml}{}}}
 \subsection{Method \code{to_yaml()}}{
-Push or update author information in a YAML file or YAML
-header. The generated YAML complies with Quarto's
-\href{https://quarto.org/docs/journals/authors.html}{author and affiliations schemas}.
+Add or update author data in the input \code{file}.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PlumeQuarto$to_yaml()}\if{html}{\out{</div>}}
 }
 
-\subsection{Details}{
-If missing, \code{to_yaml()} inserts author information into the desired file.
-Otherwise, the function replaces old \code{author} and \code{affiliations} values
-with the ones provided in the input data.
-}
-
 \subsection{Returns}{
-The input \code{file} invisibly.
+The input \code{file}, invisibly.
 }
 }
 \if{html}{\out{<hr>}}

@@ -18,7 +18,7 @@ basic_df <- tibble(
   ),
 )
 
-tempfile_ <- function() {
+temp_file <- function() {
   withr::local_tempfile(
     lines = "---\n---",
     fileext = ".qmd",
@@ -42,6 +42,6 @@ scrub_icon_path <- function(x) {
 }
 
 pull_nested_var <- function(cls, nested_var, pull) {
-  out <- unnest(cls$get_plume(), cols = all_of(nested_var))
+  out <- unnest(cls$data(), cols = all_of(nested_var))
   out[[pull]]
 }

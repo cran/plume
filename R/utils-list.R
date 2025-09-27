@@ -26,9 +26,6 @@ list_fetch <- function(x, name) {
 
 list_replace <- function(x, y) {
   for (i in names(x)) {
-    if (i == "protected") {
-      next
-    }
     x_i <- x[[i]]
     if (is.list(x_i)) {
       list_slice(x, i) <- list_replace(x_i, y)
@@ -49,7 +46,7 @@ list_replace <- function(x, y) {
 }
 
 list_drop_empty <- function(x) {
-  are_empty <- map_vec(x, \(.x) is_empty(.x))
+  are_empty <- map_vec(x, is_empty.default)
   x[are_empty] <- NULL
   x
 }

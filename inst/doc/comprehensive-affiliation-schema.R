@@ -24,8 +24,8 @@ tmp_file <- withr::local_tempfile(
 aut <- PlumeQuarto$new(author, tmp_file)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  aut <- PlumeQuarto$new(author, file = "file.qmd")
-#  aut$to_yaml()
+# aut <- PlumeQuarto$new(author, file = "file.qmd")
+# aut$to_yaml()
 
 ## ----echo = FALSE, comment = ""-----------------------------------------------
 aut$to_yaml()

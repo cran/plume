@@ -16,67 +16,16 @@ encyclopedists
 Plume$new(encyclopedists)
 
 ## ----echo = FALSE-------------------------------------------------------------
-list_keys <- function(x) {
-  nms <- names(x)
-  out <- vector("list", length(x))
-  for (i in seq_along(x)) {
-    x_i <- x[[i]]
-    if (is.list(x_i)) {
-      out[[i]] <- list_keys(x_i)
-    } else {
-      out[[i]] <- nms[i]
-    }
-  }
-  unlist(out)
-}
-
-build_table <- function(data) {
-  gt(data) |>
-  text_case_match(
-    "TRUE" ~ fontawesome::fa("check"),
-    .default = "",
-    .locations = cells_body(tidyselect::starts_with("Plume"))
-  ) |>
-  cols_label(name = "Name") |>
-  cols_align(align = "center", columns = tidyselect::starts_with("Plume")) |>
-  cols_width(name ~ pct(50)) |>
-  opt_row_striping()
-}
-
-fetch <- plume:::list_fetch
-.names_plume <- plume:::.names_plume
-.names_quarto <- plume:::.names_quarto
-.names_all <- purrr::list_modify(.names_plume, !!!.names_quarto)
-
-are_within <- function(x, y) {
-  unlist(y) %in% unlist(x)
-}
-
-make_table_vars <- function(category) {
-  vars_plume <- fetch(.names_plume, category)
-  vars_plume_quarto <- fetch(.names_quarto, category)
-  vars <- fetch(.names_all, category)
-  build_table(tibble::tibble(
-    name = list_keys(vars),
-    Plume = are_within(vars_plume, vars),
-    PlumeQuarto = are_within(vars_plume_quarto, vars),
-  ))
-}
+plume:::plm_table_vars("primaries")
 
 ## ----echo = FALSE-------------------------------------------------------------
-make_table_vars("primaries")
+plume:::plm_table_vars("secondaries")
 
 ## ----echo = FALSE-------------------------------------------------------------
-make_table_vars("secondaries")
+plume:::plm_table_vars("nestables")
 
 ## ----echo = FALSE-------------------------------------------------------------
-make_table_vars("nestables")
-
-## ----echo = FALSE-------------------------------------------------------------
-make_table_vars("protected")
-
-## ----echo = FALSE-------------------------------------------------------------
-make_table_vars("internals")
+plume:::plm_table_vars("internals")
 
 ## -----------------------------------------------------------------------------
 Plume$new(
@@ -99,14 +48,17 @@ tibble::tibble(
 )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  Plume$new(data, roles = c(
-#    supervision = "supervised the project",
-#    writing = "contributed to the writing"
-#  ))
+# Plume$new(
+#   data,
+#   roles = c(
+#     supervision = "supervised the project",
+#     writing = "contributed to the writing"
+#   )
+# )
 
 ## ----echo = FALSE-------------------------------------------------------------
 status_methods <- tibble::tibble(
-  name = c(
+  Name = c(
     "set_corresponding_authors()",
     "set_main_contributors()",
     "set_cofirst_authors()",
@@ -117,7 +69,7 @@ status_methods <- tibble::tibble(
 )
 
 ## ----echo = FALSE-------------------------------------------------------------
-build_table(status_methods)
+plume:::plm_table(status_methods)
 
 ## -----------------------------------------------------------------------------
 aut <- Plume$new(dplyr::select(encyclopedists, given_name, family_name))
@@ -131,34 +83,40 @@ aut
 
 ## ----include = FALSE----------------------------------------------------------
 tmp_file <- withr::local_tempfile(
-  lines = "---\ntitle: Encyclopédie\n---\n\nQui scribit bis legit",
-  fileext = ".qmd"
+  lines = "title: Encyclopédie",
+  fileext = ".yml"
 )
 
 ## ----echo = FALSE, comment = ""-----------------------------------------------
 cat(read_file(tmp_file))
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  aut <- PlumeQuarto$new(
-#    dplyr::slice(encyclopedists, 1, 4),
-#    file = "file.qmd"
-#  )
-#  aut$to_yaml()
+# aut <- PlumeQuarto$new(
+#   dplyr::slice(encyclopedists, 1, 4),
+#   file = "example.yml"
+# )
+# aut$to_yaml()
 
 ## ----echo = FALSE, comment = ""-----------------------------------------------
-aut <- PlumeQuarto$new(dplyr::slice(encyclopedists, 1, 4), tmp_file)
+aut <- PlumeQuarto$new(
+  dplyr::slice(encyclopedists, 1, 4),
+  tmp_file
+)
 aut$to_yaml()
 cat(read_file(tmp_file))
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  aut <- PlumeQuarto$new(
-#    dplyr::slice(encyclopedists, 2),
-#    file = "file.qmd"
-#  )
-#  aut$to_yaml()
+# aut <- PlumeQuarto$new(
+#   dplyr::slice(encyclopedists, 2),
+#   file = "example.yml"
+# )
+# aut$to_yaml()
 
 ## ----echo = FALSE, comment = ""-----------------------------------------------
-aut <- PlumeQuarto$new(dplyr::slice(encyclopedists, 2), tmp_file)
+aut <- PlumeQuarto$new(
+  dplyr::slice(encyclopedists, 2),
+  tmp_file
+)
 aut$to_yaml()
 cat(read_file(tmp_file))
 
@@ -191,7 +149,7 @@ aut$get_contact_details()
 
 aut$get_contact_details(phone = TRUE)
 
-aut$get_contact_details(format = "{name}: {details}")
+aut$get_contact_details(template = "{name}: {details}")
 
 ## -----------------------------------------------------------------------------
 aut$get_contributions()
@@ -202,10 +160,13 @@ aut$get_contributions(
   literal_names = TRUE
 )
 
-aut2 <- Plume$new(encyclopedists, roles = c(
-  supervision = "supervised the project",
-  writing = "contributed to the Encyclopédie"
-))
+aut2 <- Plume$new(
+  encyclopedists,
+  roles = c(
+    supervision = "supervised the project",
+    writing = "contributed to the Encyclopédie"
+  )
+)
 aut2$get_contributions(roles_first = FALSE, divider = " ")
 
 ## -----------------------------------------------------------------------------
@@ -216,29 +177,29 @@ aut$set_main_contributors(supervision = 4, writing = c(3, 2))
 aut$get_contributions()
 
 ## -----------------------------------------------------------------------------
-aut$set_main_contributors(jean, .roles = aut$get_roles(), .by = "given_name")
+aut$set_main_contributors(jean, .roles = aut$roles(), .by = "given_name")
 aut$get_contributions()
 
 ## -----------------------------------------------------------------------------
 aut$get_contributions(alphabetical_order = TRUE)
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  aut$set_main_contributors(4, 3, supervision = 1, .roles = aut$get_roles())
+# aut$set_main_contributors(4, 3, supervision = 1, .roles = aut$roles())
 
 ## ----echo = FALSE-------------------------------------------------------------
-str(plume:::.symbols)
+str(unclass(plm_symbols()))
 
 ## -----------------------------------------------------------------------------
 aut <- Plume$new(
   encyclopedists,
-  symbols = list(affiliation = letters, note = NULL)
+  symbols = plm_symbols(affiliation = letters, note = NULL)
 )
 
 aut$get_author_list("^a,n^")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  Plume$new(
-#    encyclopedists,
-#    symbols = list(affiliation = sequential(letters))
-#  )
+# Plume$new(
+#   encyclopedists,
+#   symbols = plm_symbols(affiliation = sequential(letters))
+# )
 

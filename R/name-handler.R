@@ -1,12 +1,13 @@
 #' @title NameHandler class
-#' @description Internal class that handles the names of a `plume` object.
+#' @description
+#' Internal class that handles the names of a plume object.
 #' @keywords internal
 #' @noRd
 NameHandler <- R6Class(
   classname = "NameHandler",
   public = list(
     initialize = function(names) {
-      check_list(names, allow_duplicates = FALSE)
+      check_list(names)
       private$names <- names
     }
   ),

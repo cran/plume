@@ -18,8 +18,8 @@ if_not_na <- function(x, value, ..., all = FALSE) {
   if_else(cnd, NA, value, ...)
 }
 
-not_na_any <- function(cols) {
-  if_any(all_of(cols), is_not_na)
+all_na <- function(cols) {
+  dplyr::if_all(all_of(cols), is.na)
 }
 
 dot <- function(x) {
@@ -34,37 +34,73 @@ make_initials <- function(x, dot = FALSE) {
   out
 }
 
-discard <- function(x, ...) {
-  x[!vec_in(x, c(...))]
+lengthen_initials <- function(initials, names) {
+  str_replace(initials, "(?=\\.?$)", get_shortest_unique_suffixes(names))
+}
+
+last_word <- function(x) {
+  x <- strsplit(x, "\\W")
+  map_vec(x, \(.x) .x[length(.x)])
+}
+
+str_starts <- function(x, y) {
+  substr(x, 1L, nchar(y)) == y
+}
+
+get_shortest_unique_suffixes <- function(x) {
+  x <- last_word(x)
+  purrr::imap_vec(x, \(value, key) {
+    names <- x[-key]
+    n_chars <- nchar(value)
+    if (value %in% names || n_chars == 1L) {
+      return("")
+    }
+    for (i in seq_len(n_chars)[-1]) {
+      prefix <- substr(value, 1L, i)
+      if (!any(str_starts(names, prefix))) {
+        return(stringr::str_sub(prefix, 2L))
+      }
+    }
+  })
+}
+
+undot <- function(x) {
+  gsub(".", "", x, fixed = TRUE)
 }
 
 vec_drop_na <- function(x) {
-  x[is_not_na(x)]
+  x[!is.na(x)]
 }
 
 vec_arrange <- function(x) {
   x[order(nchar(x), x)]
 }
 
-vec_in <- function(x, y, ignore_case = TRUE) {
-  if (ignore_case) {
-    x <- tolower(x)
-    y <- tolower(y)
-  }
-  x %in% y
+vec_normalise <- function(x, y, ignore_case = TRUE, ignore_dots = FALSE) {
+  map(list(x = x, y = y), \(item) {
+    if (ignore_case) {
+      item <- tolower(item)
+    }
+    if (ignore_dots) {
+      item <- undot(item)
+    }
+    item
+  })
 }
 
-vec_match <- function(x, y, ignore_case = TRUE) {
-  if (ignore_case) {
-    x <- tolower(x)
-    y <- tolower(y)
-  }
-  match(x, y)
+vec_in <- function(x, y, ignore_case = TRUE, ignore_dots = FALSE) {
+  items <- vec_normalise(x, y, ignore_case, ignore_dots)
+  items$x %in% items$y
+}
+
+vec_match <- function(x, y, ignore_case = TRUE, ignore_dots = TRUE) {
+  items <- vec_normalise(x, y, ignore_case, ignore_dots)
+  match(items$x, items$y)
 }
 
 rank <- function(x, base) {
   matches <- vec_match(x, base)
-  vec_rank(matches, ties = "dense")
+  vctrs::vec_rank(matches, ties = "dense")
 }
 
 recycle_to_names <- function(x, nms) {
@@ -121,7 +157,7 @@ expr_cases <- function(expr) {
     atomic = as.character(expr[-1]),
     selector = eval(expr),
     abort(
-      glue("Can't match elements with `{deparse(expr)}`."),
+      "Can't match elements with `{deparse(expr)}`.",
       call = caller_env(5)
     )
   )
@@ -139,9 +175,9 @@ caller_args <- function(n = 2) {
   as.list(caller_env(n))
 }
 
-get_params_set_to_true <- function() {
+get_detail_vars <- function() {
   args <- caller_args()
-  args_true <- args[map_vec(args, is_true)]
+  args_true <- args[map_vec(args, rlang::is_true)]
   names(args_true)
 }
 
@@ -150,9 +186,9 @@ extract_glue_vars <- function(x) {
 }
 
 group_id <- function(x) {
-  out <- vec_group_id(x)
+  out <- vctrs::vec_group_id(x)
   out <- replace(out, is.na(x) | x == 0L, NA)
-  dense_rank(out)
+  dplyr::dense_rank(out)
 }
 
 predot <- function(x) {
@@ -162,13 +198,6 @@ predot <- function(x) {
 
 propagate_na <- function(x, from) {
   replace(x, is.na(from), NA)
-}
-
-to_chr_class <- function(x, negate = FALSE) {
-  neg <- if (negate) "^" else ""
-  x <- collapse(x)
-  x <- str_replace(x, r"{([-\\\[\]])}", r"{\\\1}")
-  paste0("[", neg, x, "]")
 }
 
 str_contain <- function(string, pattern) {
@@ -193,7 +222,22 @@ unstructure <- function(x) {
   x
 }
 
-add_class <- function(x, cls) {
-  class(x) <- c(cls, class(x))
+add_class <- function(x, cls, inherit = TRUE) {
+  class(x) <- c(cls, if (inherit) class(x))
   x
+}
+
+split_chars <- function(x) {
+  strsplit(x, "", fixed = TRUE)[[1]]
+}
+
+quos <- function(...) {
+  rlang::quos(..., .named = TRUE)
+}
+
+md_escape <- function(x) {
+  if (is.null(x)) {
+    return()
+  }
+  gsub("([\\\\`#.*+!_{}\\[\\]()-])", "\\\\\\1", x, perl = TRUE)
 }

@@ -1,6 +1,6 @@
 #' @title PlumeHandler class
-#' @description Internal class processing and shaping tabular data into a
-#'   `plume` object.
+#' @description
+#' Internal class processing and shaping tabular data into a plume object.
 #' @keywords internal
 PlumeHandler <- R6Class(
   classname = "PlumeHandler",
@@ -12,32 +12,38 @@ PlumeHandler <- R6Class(
       roles,
       credit_roles,
       initials_given_name,
+      dotted_initials,
       family_name_first = FALSE,
+      distinct_initials = FALSE,
       interword_spacing = TRUE
     ) {
       check_df(data)
-      check_args(
-        "character",
-        list(names, roles),
-        force_names = TRUE,
-        allow_duplicates = FALSE
-      )
-      check_args("bool", list(
+      check_args("character", quos(names, roles), allow("null"))
+      check_args("bool", quos(
         credit_roles,
         initials_given_name,
         family_name_first,
+        distinct_initials,
+        dotted_initials,
         interword_spacing
       ))
-      super$initialize(private$plume_names)
-      private$plume <- as_tibble(data)
+      super$initialize(private$names)
+      private$plume <- tibble::as_tibble(data)
       private$initials_given_name <- initials_given_name
       private$family_name_first <- family_name_first
+      private$distinct_initials <- distinct_initials
+      private$dotted_initials <- dotted_initials
       if (!interword_spacing) {
         private$interword_spacing <- ""
       }
-      private$crt <- credit_roles
-      private$check_param_credit_roles()
-      private$roles <- roles
+      if (credit_roles) {
+        lifecycle::deprecate_stop(
+          "0.2.0",
+          "new(credit_roles)",
+          I("`roles = credit_roles()`")
+        )
+      }
+      private$.roles <- roles
       private$check_role_system()
       if (!is.null(names)) {
         private$set_names(names)
@@ -51,27 +57,50 @@ PlumeHandler <- R6Class(
       print(private$plume)
     },
 
-    get_plume = function() {
+    #' @description Get the data of a plume object.
+    #' @return A tibble.
+    data = function() {
       private$plume
     },
 
+    #' @description `r lifecycle::badge("deprecated")`
+    #'
+    #' Please use `$data()` instead.
+    #' @return A tibble.
+    get_plume = function() {
+      lifecycle::deprecate_warn("0.3.0", "get_plume()", "data()")
+      private$plume
+    },
+
+    #' @description Get the roles used in a plume object.
+    #' @return A character vector.
+    roles = function() {
+      private$.roles
+    },
+
+    #' @description `r lifecycle::badge("deprecated")`
+    #'
+    #' Please use `$roles()` instead.
+    #' @return A character vector.
     get_roles = function() {
-      private$roles
+      lifecycle::deprecate_warn("0.3.0", "get_roles()", "roles()")
+      private$.roles
     }
   ),
 
   private = list(
     plume = NULL,
-    plume_names = .names,
+    names = .names,
     initials_given_name = NULL,
     family_name_first = NULL,
-    crt = NULL,
-    roles = NULL,
+    distinct_initials = NULL,
+    dotted_initials = NULL,
+    .roles = NULL,
     interword_spacing = " ",
 
     mount = function() {
       private$build()
-      for (var in private$pick("nestables")) {
+      for (var in private$pick("nestables", "role")) {
         if (private$is_nestable(var)) {
           private$nest(var)
         }
@@ -81,96 +110,86 @@ PlumeHandler <- R6Class(
     build = function() {
       private$mold()
       private$sanitise()
-      private$check_roles()
       private$add_author_names()
-      if (!is.null(private$roles) || private$crt) {
+      if (!is.null(private$.roles)) {
         private$process_roles()
       }
       private$add_ids()
     },
 
     mold = function(...) {
-      vars <- private$get_vars()
       private$plume <- select(
         private$plume,
-        all_of(vars$primaries),
-        any_of(c(vars$secondaries, names(private$roles))),
-        starts_with(vars$nestables),
-        if (private$crt) any_of(names(list_fetch(.names, "crt"))),
+        all_of(private$pick("primaries")),
+        any_of(c(private$pick("secondaries"), names(private$.roles))),
+        starts_with(private$pick("nestables")),
         ...
       )
     },
 
     nest = function(col) {
-      out <- pivot_longer(
+      out <- tidyr::pivot_longer(
         private$plume,
         cols = starts_with(col),
         values_to = col,
         names_to = NULL
       )
-      private$plume <- nest(out, !!col := any_of(col))
-    },
-
-    get_vars = function() {
-      nestables <- private$pick("affiliation", "note", "degree")
-      if (!private$crt) {
-        nestables <- c(nestables, private$pick("role"))
-      }
-      list(
-        primaries = private$pick("primaries"),
-        secondaries = private$pick("secondaries", "orcid"),
-        nestables = nestables
-      )
+      private$plume <- nest(out, !!col := all_of(col))
     },
 
     process_roles = function() {
-      if (!is.null(private$roles)) {
-        roles <- private$roles
-      } else {
-        roles <- list_fetch(.names, "crt")
-      }
+      roles <- private$.roles
       roles <- roles[names(roles) %in% names(private$plume)]
       out <- assign_roles(private$plume, roles)
       private$plume <- rename_roles(out, roles, key = private$pick("role"))
     },
 
     add_author_names = function() {
-      if (private$initials_given_name) {
-        private$make_initials("given_name", dot = TRUE)
-      }
-      private$add_literal_names()
       private$add_initials()
+      private$add_literal_names()
     },
 
     add_literal_names = function() {
-      nominal <- private$pick("primaries")
+      nominals <- private$pick("primaries")
       if (private$family_name_first) {
-        nominal <- rev(nominal)
+        nominals <- rev(nominals)
       }
       vars <- private$pick("literal_name", "family_name", squash = FALSE)
       private$plume <- mutate(private$plume, !!vars$literal_name := paste(
-        !!!syms(nominal),
+        !!!syms(nominals),
         sep = private$interword_spacing
       ), .after = all_of(vars$family_name))
     },
 
     add_initials = function() {
-      private$make_initials("literal_name", name = private$pick("initials"))
-    },
-
-    make_initials = function(col, name, dot = FALSE) {
-      col <- private$pick(col)
-      if (!private$has_uppercase(col)) {
+      vars <- private$pick("primaries", squash = FALSE)
+      if (!private$has_uppercase(vars$family_name)) {
         return()
-      }
-      if (missing(name)) {
-        name <- col
       }
       private$plume <- mutate(
         private$plume,
-        !!name := make_initials(.data[[col]], dot = dot),
-        .after = any_of(col)
+        private$make_initials(vars),
+        .after = all_of(vars$family_name)
       )
+    },
+
+    make_initials = function(vars) {
+      cols <- squash(vars)
+      out <- select(private$plume, all_of(cols))
+      out <- mutate(out, across(
+        all_of(cols),
+        \(col) make_initials(col, private$dotted_initials)
+      ))
+      if (private$distinct_initials) {
+        out <- add_long_initials(
+          out,
+          vars$family_name,
+          private$pull("family_name")
+        )
+      }
+      out <- mutate(out, !!private$pick("initials") := do.call(paste0, out))
+      to_drop <- if (private$initials_given_name) vars$family_name else cols
+      select(out, -any_of(to_drop))
     },
 
     add_ids = function() {
@@ -200,60 +219,35 @@ PlumeHandler <- R6Class(
 
     has_col = function(col) {
       if (any(has_metachr(col))) {
-        col <- regex(col)
+        col <- stringr::regex(col)
       }
       has_name(private$plume, col)
     },
 
-    check_col = function(x, ...) {
-      missing_col <- search_(x, Negate(private$has_col))
+    check_col = function(x) {
+      missing_col <- seek(x, Negate(private$has_col))
       if (is.null(missing_col)) {
         return()
       }
       bullets <- .col_bullets[[names(missing_col)]]
-      msg <- glue("Column `{missing_col}` doesn't exist.")
-      abort_check(msg = msg, bullets = bullets, ...)
+      abort(glue("Column `{missing_col}` doesn't exist."), footer = bullets)
     },
 
     check_authors = function() {
       nominal <- private$pick("primaries")
       authors <- select(private$plume, all_of(nominal))
       missing_name <- reduce(authors, \(x, y) is_void(x) | is_void(y))
-      missing_name <- search_(missing_name)
+      missing_name <- seek(missing_name)
       if (is.null(missing_name)) {
         return()
       }
-      abort_check(msg = c(
+      abort(c(
         glue("Missing author name found in position {names(missing_name)}."),
         i = "All authors must have a given and family name."
-      ))
-    },
-
-    check_roles = function() {
-      role <- private$pick("role")
-      if (!private$has_col(begins_with(role))) {
-        return()
-      }
-      roles <- select(private$plume, starts_with(role))
-      roles <- map(roles, \(x) length(condense(x)))
-      multiple_roles <- search_(roles, \(x) x > 1L)
-      if (is.null(multiple_roles)) {
-        return()
-      }
-      abort_check(msg = c(
-        glue("Multiple roles found in column `{names(multiple_roles)}`."),
-        i = "Roles must be unique within a column."
       ))
     }
   )
 )
-
-PlumeHandler$set("private", "check_param_credit_roles", function() {
-  if (!private$crt) {
-    return()
-  }
-  print_deprecation("credit_roles", caller = "new", param = "roles")
-})
 
 PlumeHandler$set("private", "check_role_system", function() {
   var <- private$pick("role")
@@ -265,6 +259,15 @@ PlumeHandler$set("private", "check_role_system", function() {
   if (!all(have_explicit_roles)) {
     return()
   }
-  print_deprecation("explicit_roles")
-  private$plume <- select(private$plume, !any_of(names(private$roles)))
+  lifecycle::deprecate_stop(
+    "0.2.0",
+    what = I("Defining explicit roles in the input data"),
+    with = "new(roles)",
+    details = paste0(
+      "See <",
+      "https://arnaudgallou.github.io/plume/articles/plume.html",
+      "#defining-roles-and-contributors",
+      ">."
+    )
+  )
 })

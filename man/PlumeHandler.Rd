@@ -4,8 +4,7 @@
 \alias{PlumeHandler}
 \title{PlumeHandler class}
 \description{
-Internal class processing and shaping tabular data into a
-\code{plume} object.
+Internal class processing and shaping tabular data into a plume object.
 }
 \keyword{internal}
 \section{Super class}{
@@ -16,7 +15,9 @@ Internal class processing and shaping tabular data into a
 \itemize{
 \item \href{#method-PlumeHandler-new}{\code{PlumeHandler$new()}}
 \item \href{#method-PlumeHandler-print}{\code{PlumeHandler$print()}}
+\item \href{#method-PlumeHandler-data}{\code{PlumeHandler$data()}}
 \item \href{#method-PlumeHandler-get_plume}{\code{PlumeHandler$get_plume()}}
+\item \href{#method-PlumeHandler-roles}{\code{PlumeHandler$roles()}}
 \item \href{#method-PlumeHandler-get_roles}{\code{PlumeHandler$get_roles()}}
 \item \href{#method-PlumeHandler-clone}{\code{PlumeHandler$clone()}}
 }
@@ -32,7 +33,9 @@ Internal class processing and shaping tabular data into a
   roles,
   credit_roles,
   initials_given_name,
+  dotted_initials,
   family_name_first = FALSE,
+  distinct_initials = FALSE,
   interword_spacing = TRUE
 )}\if{html}{\out{</div>}}
 }
@@ -48,22 +51,60 @@ Internal class processing and shaping tabular data into a
 
 }
 \if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PlumeHandler-data"></a>}}
+\if{latex}{\out{\hypertarget{method-PlumeHandler-data}{}}}
+\subsection{Method \code{data()}}{
+Get the data of a plume object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PlumeHandler$data()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A tibble.
+}
+}
+\if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PlumeHandler-get_plume"></a>}}
 \if{latex}{\out{\hypertarget{method-PlumeHandler-get_plume}{}}}
 \subsection{Method \code{get_plume()}}{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Please use \verb{$data()} instead.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PlumeHandler$get_plume()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A tibble.
+}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-PlumeHandler-roles"></a>}}
+\if{latex}{\out{\hypertarget{method-PlumeHandler-roles}{}}}
+\subsection{Method \code{roles()}}{
+Get the roles used in a plume object.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{PlumeHandler$roles()}\if{html}{\out{</div>}}
+}
+
+\subsection{Returns}{
+A character vector.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PlumeHandler-get_roles"></a>}}
 \if{latex}{\out{\hypertarget{method-PlumeHandler-get_roles}{}}}
 \subsection{Method \code{get_roles()}}{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}
+
+Please use \verb{$roles()} instead.
 \subsection{Usage}{
 \if{html}{\out{<div class="r">}}\preformatted{PlumeHandler$get_roles()}\if{html}{\out{</div>}}
 }
 
+\subsection{Returns}{
+A character vector.
+}
 }
 \if{html}{\out{<hr>}}
 \if{html}{\out{<a id="method-PlumeHandler-clone"></a>}}

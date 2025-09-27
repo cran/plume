@@ -78,7 +78,7 @@ test_that("get_author_list() returns author list", {
 
   # overrides default symbols
 
-  aut <- Plume$new(basic_df, symbols = list(
+  aut <- Plume$new(basic_df, symbols = plm_symbols(
     affiliation = letters,
     corresponding = "#",
     note = NULL
@@ -86,7 +86,7 @@ test_that("get_author_list() returns author list", {
   aut$set_corresponding_authors(1, 3)
 
   .a <- c("a,b", "c", "a,d")
-  .c <- c("#", "", "#")
+  .c <- c("\\#", "", "\\#")
   .n <- c("1,2", "", "3")
 
   expect_equal(
@@ -107,22 +107,21 @@ test_that("get_author_list() returns author list", {
   )
 })
 
+test_that("Leading ^ are dropped when there are no symbols to display.", {
+  aut <- Plume$new(tibble::tibble(
+    given_name = "X",
+    family_name = "Y",
+    note = NA
+  ))
+  expect_equal(
+    aut$get_author_list("^n^"),
+    "X Y"
+  )
+})
+
 test_that("get_author_list() makes ORCID icons", {
   aut <- Plume$new(basic_df)
   expect_snapshot(aut$get_author_list("o"), transform = scrub_icon_path)
-})
-
-# Deprecation ----
-
-test_that("`format` is deprecated", {
-  aut <- Plume$new(basic_df)
-  expect_snapshot({
-    author_list <- aut$get_author_list(format = "a")
-  })
-  expect_equal(author_list, paste0(
-    c("Zip Zap", "Ric Rac", "Pim-Pam Pom"),
-    c("1,2", "3", "1,4")
-  ))
 })
 
 # Errors ----
@@ -136,7 +135,7 @@ test_that("get_author_list() gives meaningful error messages", {
       aut$get_author_list(1)
     ))
     (expect_error(
-      aut$get_author_list("anca")
+      aut$get_author_list("aa")
     ))
     (expect_error(
       aut$get_author_list("az")

@@ -5,23 +5,20 @@ knitr::opts_chunk$set(
 )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  library(googlesheets4)
-#  
-#  gs4_create(
-#    name = "authors",
-#    sheets = plm_template()
-#  )
+# googlesheets4::gs4_create(
+#   name = "authors",
+#   sheets = plm_template()
+# )
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  read_sheet(gs4_find("authors"))
+# googlesheets4::read_sheet("sheet_id")
 
 ## ----eval = FALSE-------------------------------------------------------------
-#  library(googlesheets4)
-#  library(plume)
-#  
-#  tbl_authors <- read_sheet(gs4_find("sheet_name"))
-#  
-#  aut <- PlumeQuarto$new(tbl_authors, file = "file.qmd")
-#  aut$set_corresponding_authors(1)
-#  aut$to_yaml()
+# library(plume)
+# 
+# tbl_authors <- googlesheets4::read_sheet("sheet_id")
+# 
+# aut <- PlumeQuarto$new(tbl_authors, file = "file.qmd")
+# aut$set_corresponding_authors(1)
+# aut$to_yaml()
 

@@ -20,11 +20,13 @@ Internal class extending \code{StatusSetter} for \code{PlumeQuarto}.
 }
 }
 \if{html}{\out{
-<details open><summary>Inherited methods</summary>
+<details><summary>Inherited methods</summary>
 <ul>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="data"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-data'><code>plume::PlumeHandler$data()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_plume"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_plume'><code>plume::PlumeHandler$get_plume()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="get_roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-get_roles'><code>plume::PlumeHandler$get_roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="print"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-print'><code>plume::PlumeHandler$print()</code></a></span></li>
+<li><span class="pkg-link" data-pkg="plume" data-topic="PlumeHandler" data-id="roles"><a href='../../plume/html/PlumeHandler.html#method-PlumeHandler-roles'><code>plume::PlumeHandler$roles()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="initialize"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-initialize'><code>plume::StatusSetter$initialize()</code></a></span></li>
 <li><span class="pkg-link" data-pkg="plume" data-topic="StatusSetter" data-id="set_corresponding_authors"><a href='../../plume/html/StatusSetter.html#method-StatusSetter-set_corresponding_authors'><code>plume::StatusSetter$set_corresponding_authors()</code></a></span></li>
 </ul>
@@ -36,15 +38,16 @@ Internal class extending \code{StatusSetter} for \code{PlumeQuarto}.
 \subsection{Method \code{set_cofirst_authors()}}{
 Set co-first authors.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_cofirst_authors(..., .by)}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_cofirst_authors(..., .by = NULL)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{One or more unquoted expressions separated by commas.
-Expressions matching values in the column defined by \code{by}/\code{.by}
-determine co-first authors. Matching of values is case-insensitive.}
+Expressions matching values in the column defined by \code{by} or \code{.by}
+determine co-first authors. Matching of values is case-insensitive and
+dot-agnostic.}
 
 \item{\code{.by}}{Variable used to specify which authors contributed equally to
 the work. By default, uses authors' id.}
@@ -63,7 +66,11 @@ The class instance.
 
 This method has been deprecated in favour of \code{set_cofirst_authors()}.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_equal_contributor(..., .by, by = deprecated())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_equal_contributor(
+  ...,
+  .by = NULL,
+  by = deprecated()
+)}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
@@ -92,15 +99,16 @@ The class instance.
 \subsection{Method \code{set_deceased()}}{
 Set deceased authors.
 \subsection{Usage}{
-\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_deceased(..., .by, by = deprecated())}\if{html}{\out{</div>}}
+\if{html}{\out{<div class="r">}}\preformatted{StatusSetterPlumeQuarto$set_deceased(..., .by = NULL, by = deprecated())}\if{html}{\out{</div>}}
 }
 
 \subsection{Arguments}{
 \if{html}{\out{<div class="arguments">}}
 \describe{
 \item{\code{...}}{One or more unquoted expressions separated by commas.
-Expressions matching values in the column defined by \code{by}/\code{.by}
-determine deceased authors. Matching of values is case-insensitive.}
+Expressions matching values in the column defined by \code{by} or \code{.by}
+determine deceased authors. Matching of values is case-insensitive and
+dot-agnostic.}
 
 \item{\code{.by}}{Variable used to specify whether an author is deceased or not.
 By default, uses authors' id.}

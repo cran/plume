@@ -41,10 +41,6 @@ test_that("get_contributions() return authors' contributions", {
     c("a: Z.Z., R.R. & P.-P.P.", "b: Z.Z.")
   )
   expect_equal(
-    aut$get_contributions(by_author = FALSE, dotted_initials = FALSE),
-    c("a: ZZ, RR and P-PP", "b: ZZ")
-  )
-  expect_equal(
     aut$get_contributions(by_author = FALSE, literal_names = TRUE),
     c("a: Zip Zap, Ric Rac and Pim-Pam Pom", "b: Zip Zap")
   )
@@ -163,43 +159,20 @@ test_that("set_main_contributors() ranks contributors", {
     c("Writing: A.A., C.C. and B.B.", "Analysis: A.A., C.C. and B.B.")
   )
 
-  aut$set_main_contributors(writing = aa, analysis = bb, .by = "initials")
+  aut$set_main_contributors(writing = a.a., analysis = b.b., .by = "initials")
   expect_equal(
     aut$get_contributions(),
     c("Writing: A.A., C.C. and B.B.", "Analysis: B.B., C.C. and A.A.")
   )
 
   aut$set_main_contributors(
-    writing = c(aa, bb), analysis = bb,
+    writing = c(a.a., b.b.), analysis = b.b.,
     .by = "initials"
   )
   expect_equal(
     aut$get_contributions(),
     c("Writing: A.A., B.B. and C.C.", "Analysis: B.B., C.C. and A.A.")
   )
-})
-
-# Deprecation ----
-
-test_that("specifying roles inside columns is deprecated", {
-  expect_snapshot({
-    aut <- Plume$new(data.frame(
-      given_name = "Zip",
-      family_name = "Zap",
-      role = "a"
-    ))
-  })
-  expect_equal(aut$get_contributions(), "a: Z.Z.")
-})
-
-test_that("`credit_roles = TRUE` is deprecated", {
-  expect_snapshot({
-    aut <- Plume$new(
-      data.frame(given_name = "Zip", family_name = "Zap", analysis = 1),
-      credit_roles = TRUE
-    )
-  })
-  expect_equal(aut$get_contributions(), "Formal analysis: Z.Z.")
 })
 
 # Errors ----
@@ -218,9 +191,6 @@ test_that("get_contributions() gives meaningful error messages", {
       aut$get_contributions(alphabetical_order = "")
     ))
     (expect_error(
-      aut$get_contributions(dotted_initials = "")
-    ))
-    (expect_error(
       aut$get_contributions(literal_names = "")
     ))
     (expect_error(
@@ -233,4 +203,7 @@ test_that("get_contributions() gives meaningful error messages", {
       aut$get_contributions(divider = 1)
     ))
   })
+
+  aut <- Plume$new(data.frame(given_name = "A", family_name = "B"))
+  expect_snapshot(aut$get_contributions(), error = TRUE)
 })

@@ -1,16 +1,18 @@
-.names_plume <- list_modify(.names, public = list(
+.names_plume <- list_modify(
+  .names,
   internals = list(contributor_rank = "contributor_rank")
-))
-
-.symbols <- list(
-  affiliation = NULL,
-  corresponding = "\\*",
-  note = c("\u2020", "\u2021", "\u00a7", "\u00b6", "\u0023", "\\*\\*")
 )
 
-#' @title Plume class
-#' @description Class that generates author lists and other author-related
-#'   information as character strings.
+#' @title Generate author information within a document
+#' @description
+#' `Plume` provides several methods to generate author information directly
+#' within an R Markdown or Quarto document. This is a convenient solution when
+#' you don't need preformatted reports.
+#'
+#' In some cases, `Plume` gives you greater control over the formatting of
+#' author information, as it supports features not available in [`PlumeQuarto`].
+#' @section Notes:
+#' `new_plume()` is an alias for `Plume$new()`.
 #' @examples
 #' # Create a Plume instance
 #' aut <- Plume$new(encyclopedists)
@@ -19,7 +21,7 @@
 #' # authors' id by default
 #' aut$set_corresponding_authors(1, 4)
 #'
-#' # Getting authors suffixed by affiliation ids
+#' # Listing authors, followed by affiliation ids
 #' # and the corresponding author mark:
 #' aut$get_author_list("^a,c^")
 #'
@@ -36,7 +38,7 @@
 #' # E.g. to use letters as affiliation ids:
 #' aut <- Plume$new(
 #'   encyclopedists,
-#'   symbols = list(affiliation = letters)
+#'   symbols = plm_symbols(affiliation = letters)
 #' )
 #'
 #' aut$get_author_list("^a^")
@@ -45,10 +47,13 @@
 #'
 #' # It is also possible to output contributions in the
 #' # active voice
-#' aut <- Plume$new(encyclopedists, roles = c(
-#'   supervision = "supervised the project",
-#'   writing = "contributed to the Encyclopédie"
-#' ))
+#' aut <- Plume$new(
+#'   encyclopedists,
+#'   roles = c(
+#'     supervision = "supervised the project",
+#'     writing = "contributed to the Encyclopédie"
+#'   )
+#' )
 #' aut$get_contributions(roles_first = FALSE, divider = " ")
 #' @export
 Plume <- R6Class(
@@ -56,26 +61,30 @@ Plume <- R6Class(
   inherit = StatusSetterPlume,
   public = list(
     #' @description Create a `Plume` object.
-    #' @param data A data frame containing author-related data.
+    #' @param data A data frame containing author data.
     #' @param names A vector of key-value pairs specifying custom names to use,
     #'   where keys are default names and values their respective replacements.
-    #' @param symbols A list of key-value pairs defining the symbols to use to
-    #'   link authors and their metadata. Valid keys are `"affiliation"`,
-    #'   `"corresponding"` and `"note"`. By default, uses digits for
-    #'   affiliations, `"*"` for corresponding authors and `"†"`, `"‡"`, `"§"`,
-    #'   `"¶"`, `"#"`, `"**"` for notes. Set a key to `NULL` to use numerals.
     #' @param roles A vector of key-value pairs defining roles where keys
     #'   identify role columns and values describe the actual roles to use.
+    #' @param symbols Symbols, as defined by [plm_symbols()], used to link
+    #'   authors to their metadata. Special Markdown characters are
+    #'   automatically escaped internally.
     #' @param credit_roles `r lifecycle::badge("deprecated")`
     #'
     #'   It is now recommended to use `roles = credit_roles()` to use the
     #'   `r link("crt")`.
     #' @param initials_given_name Should the initials of given names be used?
+    #' @param dotted_initials Should initials be dot-separated?
     #' @param family_name_first Should literal names show family names first?
+    #' @param distinct_initials If `TRUE`, will expand identical initials with
+    #'   additional letters from the last word of their respective family name
+    #'   until initials are unique. Initials of authors sharing the exact same
+    #'   name will remain in the short form.
     #' @param interword_spacing Should literal names use spacing? This parameter
     #'   is only useful for people writing in languages that don't separate
     #'   words with a space such as Chinese or Japanese.
-    #' @param orcid_icon The ORCID icon, as defined by [`orcid()`], to be used.
+    #' @param orcid_icon The ORCID icon, as defined by [icn_orcid()], to be
+    #'   used. Only supported in R Markdown.
     #' @param by A character string defining the default variable used to assign
     #'   specific metadata to authors in all `set_*()` methods. By default, uses
     #'   authors' id.
@@ -83,13 +92,15 @@ Plume <- R6Class(
     initialize = function(
       data,
       names = NULL,
-      symbols = NULL,
       roles = credit_roles(),
+      symbols = plm_symbols(),
       credit_roles = FALSE,
       initials_given_name = FALSE,
+      dotted_initials = TRUE,
       family_name_first = FALSE,
+      distinct_initials = FALSE,
       interword_spacing = TRUE,
-      orcid_icon = orcid(),
+      orcid_icon = icn_orcid(),
       by = NULL
     ) {
       super$initialize(
@@ -98,19 +109,19 @@ Plume <- R6Class(
         roles,
         credit_roles,
         initials_given_name,
+        dotted_initials,
         family_name_first,
+        distinct_initials,
         interword_spacing,
         by = by
       )
-      check_list(symbols, force_names = TRUE)
+      check_symbols(symbols)
       check_orcid_icon(orcid_icon)
-      if (!is.null(symbols)) {
-        private$symbols <- list_replace(private$symbols, symbols)
-      }
+      private$symbols <- map(symbols, md_escape)
       private$orcid_icon <- orcid_icon
     },
 
-    #' @description Get author list.
+    #' @description Get the list of authors.
     #' @param suffix A character string defining the format of symbols suffixing
     #'   author names. See details.
     #' @param format `r lifecycle::badge("deprecated")`
@@ -122,18 +133,22 @@ Plume <- R6Class(
     #' * `a` for affiliations
     #' * `c` for corresponding authors
     #' * `n` for notes
-    #' * `o` for ORCIDs
+    #' * `o` for ORCID icons (only supported in R Markdown)
     #'
-    #' The order of the keys determines the order of symbol types. E.g. `"ac"`
-    #' shows affiliation ids first and corresponding author mark second, when
-    #' `"ca"` shows corresponding author mark first and affiliation ids second.
-    #' Use `","` to separate and `"^"` to superscript symbols.
-    #' Use `NULL` or an empty string to list author names without suffixes.
+    #' The order of the keys determines the order of symbol types. For example,
+    #' `"ac"` shows affiliation ids first and corresponding author mark second,
+    #' when `"ca"` shows corresponding author mark first and affiliation ids
+    #' second. Use `","` to separate and `"^"` to superscript symbols.
+    #'
+    #' Set to `NULL` or `""` to list authors without suffixes.
     #' @return A character vector.
     get_author_list = function(suffix = NULL, format = deprecated()) {
       if (lifecycle::is_present(format)) {
-        lifecycle::deprecate_warn("0.2.0", "get_author_list(format)", "get_author_list(suffix)")
-        suffix <- format
+        lifecycle::deprecate_stop(
+          "0.2.1",
+          "get_author_list(format)",
+          "get_author_list(suffix)"
+        )
       }
       authors <- private$pull("literal_name")
       if (is_empty(suffix)) {
@@ -163,57 +178,68 @@ Plume <- R6Class(
 
     #' @description Get authors' ORCID.
     #' @param compact Should links only display the 16-digit identifier?
-    #' @param icon Should the ORCID icon be shown?
+    #' @param icon Should the ORCID icon be shown? This is only supported in R
+    #'   Markdown.
     #' @param sep Separator used to separate authors and their respective ORCID.
     #' @return A character vector.
     get_orcids = function(compact = FALSE, icon = TRUE, sep = "") {
-      check_args("bool", list(compact, icon))
-      check_string(sep)
-      private$check_col("orcid")
-      out <- drop_na(private$plume, "orcid")
+      check_args("bool", quos(compact, icon))
+      check_string(sep, allow("empty"))
+      col <- private$pick("orcid")
+      private$check_col(col)
+      out <- drop_na(private$plume, all_of(col))
       if (icon) {
-        out <- add_orcid_icons(out, private$orcid_icon)
+        out <- add_orcid_icons(out, col, private$orcid_icon)
       }
-      out <- add_orcid_links(out, "orcid", compact)
-      cols <- c(private$pick("literal_name"), predot("orcid"))
+      out <- add_orcid_links(out, col, compact)
+      cols <- c(private$pick("literal_name"), predot(col))
       out <- collapse_cols(out, cols, sep)
       as_plm(out)
     },
 
     #' @description Get the contact details of corresponding authors.
-    #' @param format A [`glue`][glue::glue()] specification that uses the
+    #' @param template A [glue][glue::glue()] specification that uses the
     #'   variables `name` and/or `details`.
+    #' @param format `r lifecycle::badge("deprecated")`
+    #'
+    #' Please use the parameter `template` instead.
     #' @param email,phone,fax,url Arguments equal to `TRUE` are evaluated and
     #'   passed to the variable `details`. By default, only `email` is set to
     #'   `TRUE`.
     #' @param sep Separator used to separate `details` items.
     #' @return A character vector.
     get_contact_details = function(
-      format = "{details} ({name})",
+      template = "{details} ({name})",
       email = TRUE,
       phone = FALSE,
       fax = FALSE,
       url = FALSE,
-      sep = ", "
+      sep = ", ",
+      format = deprecated()
     ) {
-      check_glue(format, allowed = c("name", "details"))
-      check_args("bool", list(email, phone, fax, url))
-      check_string(sep, allow_empty = FALSE)
+      if (lifecycle::is_present(format)) {
+        lifecycle::deprecate_warn(
+          "0.2.6",
+          "get_contact_details(format)",
+          "get_contact_details(template)"
+        )
+        template <- format
+      }
+      check_glue(template, vars = c("name", "details"))
+      check_args("bool", quos(email, phone, fax, url))
+      check_string(sep)
       vars <- private$pick("corresponding", "literal_name", squash = FALSE)
       private$check_col(vars["corresponding"])
-      arg_names <- get_params_set_to_true()
-      if (is_empty(arg_names)) {
+      details <- get_detail_vars()
+      if (is_empty(details)) {
         return()
       }
-      cols <- private$pick(arg_names)
+      cols <- private$pick(details)
       private$check_col(cols)
-      out <- filter(
-        private$plume,
-        .data[[vars$corresponding]] & not_na_any(cols)
-      )
+      data <- filter(private$plume, .data[[vars$corresponding]] & !all_na(cols))
       dict <- list(details = cols, name = vars$literal_name)
-      dissolve(out, dict, partial(collapse_cols, sep = sep))
-      as_plm(glue(format))
+      items <- map(dict, \(item) collapse_cols(data, item, sep))
+      as_plm(glue::glue_data(items, template))
     },
 
     #' @description Get authors' contributions.
@@ -222,7 +248,9 @@ Plume <- R6Class(
     #' @param by_author Should roles be grouped by author?
     #' @param alphabetical_order Should authors be listed in alphabetical order?
     #'   By default, lists authors in the order they are defined in the data.
-    #' @param dotted_initials Should initials be dot-separated?
+    #' @param dotted_initials `r lifecycle::badge("deprecated")`
+    #'
+    #' Please use the `dotted_initials` parameter of `Plume$new()` instead.
     #' @param literal_names Should literal names be used?
     #' @param divider Separator used to separate roles from authors.
     #' @param sep Separator used to separate roles or authors.
@@ -233,36 +261,43 @@ Plume <- R6Class(
       roles_first = TRUE,
       by_author = FALSE,
       alphabetical_order = FALSE,
-      dotted_initials = TRUE,
       literal_names = FALSE,
       divider = ": ",
       sep = ", ",
-      sep_last = " and "
+      sep_last = " and ",
+      dotted_initials = deprecated()
     ) {
+      if (lifecycle::is_present(dotted_initials)) {
+        lifecycle::deprecate_warn(
+          "0.3.0",
+          "get_contributions(dotted_initials)",
+          "Plume$new(dotted_initials)"
+        )
+      }
       role <- private$pick("role")
       private$check_col(role)
-      check_args("bool", list(
+      check_args("bool", quos(
         roles_first,
         by_author,
         alphabetical_order,
-        dotted_initials,
         literal_names
       ))
-      check_args("string", list(divider, sep, sep_last))
-      out <- unnest_drop(private$plume, role)
+      check_args(
+        "string",
+        quos(divider, sep, sep_last),
+        allow("empty", "unnamed")
+      )
+      out <- unnest_drop_na(private$plume, role)
       if (is_empty(out)) {
         return()
       }
       pars <- private$contribution_pars(roles_first, by_author, literal_names)
-      if (dotted_initials && pars$has_initials && !literal_names) {
-        out <- mutate(out, !!pars$author := dot(.data[[pars$author]]))
-      }
       out <- summarise(out, !!pars$var := enumerate(
         contribution_items(pars, by_author, alphabetical_order),
         sep = sep,
         last = sep_last
       ), .by = all_of(pars$grp_var))
-      if ((are_credit_roles(private$roles) || private$crt) && !by_author) {
+      if (are_credit_roles(private$.roles) && !by_author) {
         out <- arrange(out, role)
       }
       out <- collapse_cols(out, pars$format, sep = divider)
@@ -271,13 +306,13 @@ Plume <- R6Class(
   ),
 
   private = list(
-    plume_names = .names_plume,
-    symbols = .symbols,
+    names = .names_plume,
+    symbols = NULL,
     orcid_icon = NULL,
 
-    get_author_list_suffixes = function(format) {
-      check_suffix_format(format, param = "suffix")
-      key_set <- als_key_set(format)
+    get_author_list_suffixes = function(template) {
+      check_als_template(template, arg = "suffix")
+      key_set <- als_key_set(template)
       vars <- private$pick(key_set, squash = FALSE)
       private$check_col(vars)
       cols <- squash(vars)
@@ -288,15 +323,15 @@ Plume <- R6Class(
       grp_vars <- private$pick("id", "literal_name")
       .cols <- predot(cols)
       out <- summarise(out, across(all_of(.cols), bind), .by = all_of(grp_vars))
-      als_make(out, .cols, format)
+      als_make(out, .cols, template)
     },
 
     get_footnotes = function(var, superscript, sep) {
       col <- private$pick(var)
       private$check_col(col)
       check_bool(superscript)
-      check_string(sep)
-      out <- unnest_drop(private$plume, col)
+      check_string(sep, allow("null", "empty"))
+      out <- unnest_drop_na(private$plume, col)
       if (is_empty(out)) {
         return()
       }
@@ -316,8 +351,7 @@ Plume <- R6Class(
         "initials", "literal_name", "role", "id", "contributor_rank",
         squash = FALSE
       )
-      has_initials <- private$has_col(vars$initials)
-      if (!has_initials || literal_names) {
+      if (!private$has_col(vars$initials) || literal_names) {
         author <- vars$literal_name
       } else {
         author <- vars$initials
@@ -334,8 +368,6 @@ Plume <- R6Class(
         var <- author
       }
       list(
-        has_initials = has_initials,
-        author = author,
         grp_var = grp_var,
         rank = vars$contributor_rank,
         var = var,
@@ -344,6 +376,11 @@ Plume <- R6Class(
     }
   )
 )
+
+#' @rdname Plume
+#' @usage NULL
+#' @export
+new_plume <- Plume$new
 
 contribution_items <- function(pars, by_author, alphabetical_order) {
   data <- dplyr::pick(any_of(c(pars$var, pars$rank)))
